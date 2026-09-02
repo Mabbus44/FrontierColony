@@ -14,4 +14,4 @@ local TileType = {
     LAND = "LAND"
 }
 
-return Biome, TileType
+return TileType

@@ -1,0 +1,60 @@
+Programming guidelines:
+* One class per file. Should look like bellow. This gives warnings if I use properties that dont exist in a class.
+	---@class ExpeditionBuilding
+	---@field prop1 number
+	---@field prop2 number
+
+	local ExpeditionBuilding = {}
+	ExpeditionBuilding.__index = ExpeditionBuilding
+
+	function ExpeditionBuilding:new()
+			local obj = setmetatable({}, self)
+    
+			obj.prop1 = 0
+			obj.prop2 = 0
+    
+			return obj
+	end
+
+	return ExpeditionBuilding
+* Files are added to package like this in main and can then be called with "require".
+	package.path = package.path
+		.. ";Tests/?.lua"
+		.. ";Tests/Utils/?.lua"
+		.. ";Utils/?.lua"
+* Objects of type "MyUtil" are then created like this (and other static methods then new are called in the same way)
+	local MyUtil = require("Utils.myUtil")
+	local ut = MyUtil:new()
+* Each file is read once, so variables there are global over the whole project. Class:new() creates a new object each time it is created.
+
+Game design:
+- You are sent on a mission to colonize a distant planet in the hunt for resource. Due to a asteroid hit your ship you lost all equipment except the cloner. Everyone died except you.
+- Start game with 1 human and a cloner.
+	- The cloner produce humans at a constant speed, costing food.
+	- Human also require a small amount of food for upkeep.
+	- Cloner can be upgraded with special resources for higher speed, but greater cost per human.
+- World map with biomes (ice (Aquillo), lava (vulcanus), swamp (gleba), grass (nauvis), desert (nauvis), i dont think fulgora should be representet).
+- Each city its own small surface
+- Build resource collecting buildings in cities
+	- Each building has 5 collectors (humnans), and any amount of transporters/military support.
+	- All humans in one building move as a team to a point on the map, collect resources, and return with them.
+- Some resources can also be gathered inside cities, for example:
+	- Basic resources to startup
+	- Specialized mines for lategame high scale production (maybe). Should probably be slower per human, but last longer or not run out at all (like oil).
+- Caravans can be built to move things between cities, or clear biters, or explores, or found new cities. They contain transport humans and military.
+- Each square on the worlmap has a biter amount, biter types, and biter evolution
+	- Amount is decresed when you kill biters
+	- Types is different per biome
+	- Evolution is different per biome and increase over time and by pollution
+- No technologies
+	- instead you are limited by materials only existing in sertain biomes
+	- and some things only being buildable in certain biomes.-
+	- And you are limited where you can expand by your weponds and the biters in each biome.
+	- There should be a specific order you expand in, probably grass -> desert -> swamp -> lava -> ice
+- Goal of the game is building a spaceship capable of transporting resources to your homeworld
+
+Undesided things
+- We need something that replace science as the thing you always want to produce more of. People and military is kinda like that, but I feel you can get saturated on both.
+- There could be some objectives that give some bonuses
+
+Todo:

@@ -5,7 +5,7 @@
 
 local WorldMapRaw = require("Assets.worldMapRaw")
 local TileType = require("Enums.tileType")
-local Constants = require("Classes.Constants")
+local Constants = require("Classes.constants")
 
 ---This is a global static object, hence no "new" method and no metatable
 local WorldMap = {}
@@ -68,7 +68,7 @@ function WorldMap:setTiles(left_top, right_bottom)
   log("Setting (" .. minX .. "," .. minY .. ")-(" .. maxX .. "," .. maxY .. ")");
   for y = minY, maxY do
     for x = minX, maxX do
-      table.insert(worldMapTiles, {name = self.tiles[y][x].tileName, position = {x, y}});
+      table.insert(worldMapTiles, {name = self.tiles[y + middleY][x + middleX].tileName, position = {x, y}});
     end
   end
   self:getSurface().set_tiles(worldMapTiles);

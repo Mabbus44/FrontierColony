@@ -7,13 +7,13 @@ local ResourceSquare = {}
 ResourceSquare.__index = ResourceSquare
 
 function ResourceSquare:new()
-    local obj = setmetatable({}, self)
-    
-    obj.resourceCount = 0
-    obj.resourceMaxCount = 0
-    obj.resourceType = nil
-    
-    return obj
+  local obj = setmetatable({}, self)
+
+  obj.resourceCount = 0
+  obj.resourceMaxCount = 0
+  obj.resourceType = nil
+
+  return obj
 end
 
 return ResourceSquare

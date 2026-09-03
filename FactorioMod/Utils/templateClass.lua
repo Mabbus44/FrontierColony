@@ -6,12 +6,12 @@ local Template = {}
 Template.__index = Template
 
 function Template:new()
-    local obj = setmetatable({}, self)
-    
-    obj.prop1 = 0
-    obj.prop2 = 0
-    
-    return obj
+  local obj = setmetatable({}, self)
+
+  obj.prop1 = 0
+  obj.prop2 = 0
+
+  return obj
 end
 
 return Template

@@ -82,7 +82,7 @@ end
 bmp:close()
 
 -- Write Lua file
-local out = assert(io.open("FactorioMod/Assets/worldMap.lua", "w"))
+local out = assert(io.open("FactorioMod/Assets/worldMapRaw.lua", "w"))
 
 out:write("---@class WorldMap\n")
 out:write("---@field width number\n")
@@ -90,12 +90,12 @@ out:write("---@field height number\n")
 out:write("---@field tiles number[][]\n\n")
 
 out:write("local WorldMap = {\n")
-out:write(("    width = %d,\n"):format(width))
-out:write(("    height = %d,\n"):format(height))
-out:write("    tiles = {\n")
+out:write(("  width = %d,\n"):format(width))
+out:write(("  height = %d,\n"):format(height))
+out:write("  tiles = {\n")
 
 for y, row in ipairs(tiles) do
-    out:write("        {")
+    out:write("    {")
     for x, tile in ipairs(row) do
         out:write(("%02d"):format(tile))
         if x < #row then out:write(",") end
@@ -105,7 +105,7 @@ for y, row in ipairs(tiles) do
     out:write("\n")
 end
 
-out:write("    }\n")
+out:write("  }\n")
 out:write("}\n")
 out:write("return WorldMap;\n")
 out:close()

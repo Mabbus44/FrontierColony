@@ -1,5 +1,5 @@
 local EventQueueTest = {}
-local EventQueue = require("Utils.eventQueue")
+local EventQueue = require("Classes.eventQueue")
 
 function EventQueueTest:testAddEvent()
   EventQueue:addEvent(10, function() return 1 end)

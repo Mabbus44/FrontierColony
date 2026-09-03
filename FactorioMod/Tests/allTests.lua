@@ -1,5 +1,5 @@
 local AllTests = {}
-local EventQueueTest = require("Tests.Utils.eventQueueTest")
+local EventQueueTest = require("Tests.Classes.eventQueueTest")
 AllTests.runAllTests = function()
   EventQueueTest:testAddEvent()
 end

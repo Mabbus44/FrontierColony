@@ -1,11 +1,14 @@
 ---@class WorldMap
 ---@field width number
 ---@field height number
----@field tiles table<number, table<number, TileType>>
+---@field tiles table<number, table<number, WorldMapSquare>>
 
 local WorldMapRaw = require("Assets.worldMapRaw")
 local TileType = require("Enums.tileType")
 local Constants = require("Classes.constants")
+local WorldMapSquare = require("Classes.World.worldMapSquare")
+local Settlement = require("Classes.Settlement.settlement")
+local EntityData = require("Classes.entityData")
 
 ---This is a global static object, hence no "new" method and no metatable
 local WorldMap = {}
@@ -17,7 +20,7 @@ function WorldMap:loadWorldMap()
   for y = 1, WorldMapRaw.height do
     self.tiles[y] = {}
     for x = 1, WorldMapRaw.width do
-      self.tiles[y][x] = TileType[WorldMapRaw.tiles[y][x]]
+      self.tiles[y][x] = WorldMapSquare:new(TileType[WorldMapRaw.tiles[y][x]])
     end
   end
 end
@@ -68,10 +71,15 @@ function WorldMap:setTiles(left_top, right_bottom)
   log("Setting (" .. minX .. "," .. minY .. ")-(" .. maxX .. "," .. maxY .. ")");
   for y = minY, maxY do
     for x = minX, maxX do
-      table.insert(worldMapTiles, {name = self.tiles[y + middleY][x + middleX].tileName, position = {x, y}});
+      table.insert(worldMapTiles, {name = self.tiles[y + middleY][x + middleX].tileType.tileName, position = {x, y}});
     end
   end
   self:getSurface().set_tiles(worldMapTiles);
+end
+
+function WorldMap:addSettlement(x, y)
+  self.tiles[y][x].settlement = Settlement:new(x, y, self.tiles[y][x].tileType.tileName)
+  EntityData:forEntity(self.tiles[y][x].settlement.worldMapEntity).settlement = self.tiles[y][x].settlement
 end
 
 -- Load the map first time the file is loaded

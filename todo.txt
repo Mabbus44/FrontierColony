@@ -1,31 +1,8 @@
-Programming guidelines:
-* One class per file. Should look like bellow. This gives warnings if I use properties that dont exist in a class.
-	---@class ExpeditionBuilding
-	---@field prop1 number
-	---@field prop2 number
+Todo:
+	* Create a settlement on the world map. Go to it´s surface if you click it
 
-	local ExpeditionBuilding = {}
-	ExpeditionBuilding.__index = ExpeditionBuilding
+Done:
 
-	function ExpeditionBuilding:new()
-			local obj = setmetatable({}, self)
-    
-			obj.prop1 = 0
-			obj.prop2 = 0
-    
-			return obj
-	end
-
-	return ExpeditionBuilding
-* Files are added to package like this in main and can then be called with "require".
-	package.path = package.path
-		.. ";Tests/?.lua"
-		.. ";Tests/Utils/?.lua"
-		.. ";Utils/?.lua"
-* Objects of type "MyUtil" are then created like this (and other static methods then new are called in the same way)
-	local MyUtil = require("Utils.myUtil")
-	local ut = MyUtil:new()
-* Each file is read once, so variables there are global over the whole project. Class:new() creates a new object each time it is created.
 
 Game design:
 - You are sent on a mission to colonize a distant planet in the hunt for resource. Due to a asteroid hit your ship you lost all equipment except the cloner. Everyone died except you.
@@ -57,4 +34,3 @@ Undesided things
 - We need something that replace science as the thing you always want to produce more of. People and military is kinda like that, but I feel you can get saturated on both.
 - There could be some objectives that give some bonuses
 
-Todo:

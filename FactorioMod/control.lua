@@ -1,5 +1,7 @@
 local WorldMap = require("Classes.World.worldMap")
-local worldMapSurfaceName = "world_map";
+local Settlement = require("Classes.Settlement.settlement")
+local EntityData = require("Classes.entityData")
+local Constants = require("Classes.constants")
 
 script.on_init(function()
   log("on_init");
@@ -20,6 +22,11 @@ script.on_event(defines.events.on_cutscene_cancelled, function(event)
   log("on_cutscene_cancelled");
   local player = game.get_player(event.player_index);
   log("player.teleport: " .. tostring(player.teleport({x = 0, y = 0}, WorldMap:getSurface())));
+end)
+
+script.on_nth_tick(1000, function(event)
+  WorldMap:addSettlement(3, 3);
+
   local nauvis = game.surfaces["nauvis"];
   log("Surfaces before");
   for name, surface in pairs(game.surfaces) do
@@ -40,6 +47,14 @@ script.on_event(defines.events.on_chunk_generated, function(event)
 
   if event.surface.name == WorldMap:getSurface().name then
     WorldMap:setTiles(event.area.left_top, event.area.right_bottom);
+  elseif event.surface.name:sub(1, #Constants.settlementSurfaceNameBase) == Constants.settlementSurfaceNameBase then
+    EntityData:forEntity(event.surface).settlement:setTiles(event.area.left_top, event.area.right_bottom)
   end
+end)
 
+script.on_event(defines.events.on_gui_opened, function(event)
+  if event.entity and event.entity.name == "settlement" then
+    local settlement = EntityData:forEntity(event.entity).settlement
+    settlement:clicked(event.player_index)
+  end
 end)

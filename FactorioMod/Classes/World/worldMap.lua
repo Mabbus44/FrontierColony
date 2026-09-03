@@ -78,7 +78,8 @@ function WorldMap:setTiles(left_top, right_bottom)
 end
 
 function WorldMap:addSettlement(x, y)
-  self.tiles[y][x].settlement = Settlement:new(x, y, self.tiles[y][x].tileType.tileName)
+  log("Worldmap:addSettlement")
+	self.tiles[y][x].settlement = Settlement:new(x, y, self.tiles[y][x].tileType.tileName)
   EntityData:forEntity(self.tiles[y][x].settlement.worldMapEntity).settlement = self.tiles[y][x].settlement
 end
 

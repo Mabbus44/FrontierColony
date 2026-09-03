@@ -2,10 +2,12 @@ local WorldMap = require("Classes.World.worldMap")
 local Settlement = require("Classes.Settlement.settlement")
 local EntityData = require("Classes.entityData")
 local Constants = require("Classes.constants")
+local EventQueue = require("Classes.eventQueue")
 
 script.on_init(function()
   log("on_init");
   WorldMap:createSurface();
+	EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
 end)
 
 script.on_event(defines.events.on_player_created, function(event)
@@ -24,22 +26,8 @@ script.on_event(defines.events.on_cutscene_cancelled, function(event)
   log("player.teleport: " .. tostring(player.teleport({x = 0, y = 0}, WorldMap:getSurface())));
 end)
 
-script.on_nth_tick(1000, function(event)
-  WorldMap:addSettlement(3, 3);
-
-  local nauvis = game.surfaces["nauvis"];
-  log("Surfaces before");
-  for name, surface in pairs(game.surfaces) do
-    log("Surface: " .. name);
-  end
-  if nauvis then
-    log("nauvis deleted");
-    log("game.delete_surface: " .. tostring(game.delete_surface(nauvis)));
-  end
-  log("Surfaces after");
-  for name, surface in pairs(game.surfaces) do
-    log("Surface: " .. name);
-  end
+script.on_nth_tick(10, function(event)
+  EventQueue:runEvents(event.tick);
 end)
 
 script.on_event(defines.events.on_chunk_generated, function(event)
@@ -48,7 +36,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
   if event.surface.name == WorldMap:getSurface().name then
     WorldMap:setTiles(event.area.left_top, event.area.right_bottom);
   elseif event.surface.name:sub(1, #Constants.settlementSurfaceNameBase) == Constants.settlementSurfaceNameBase then
-    EntityData:forEntity(event.surface).settlement:setTiles(event.area.left_top, event.area.right_bottom)
+    EntityData:forSurface(event.surface).settlement:setTiles(event.area.left_top, event.area.right_bottom)
   end
 end)
 

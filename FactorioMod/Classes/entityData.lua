@@ -5,11 +5,11 @@ local EntityData = {
 }
 
 function EntityData:forEntity(entity)
-  if entity.unit_number ~= nil then
-    return self:forEntityId(entity.unit_number)
-  else
-    return self:forEntityId(entity.name)
-  end
+	return self:forEntityId(entity.unit_number)
+end
+
+function EntityData:forSurface(surface)
+	return self:forEntityId(surface.name)
 end
 
 function EntityData:forEntityId(entityId)

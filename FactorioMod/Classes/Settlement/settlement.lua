@@ -2,6 +2,8 @@
 ---@field id number
 ---@field worldMapEntity LuaEntity
 ---@field tileName string
+---@field width number
+---@field height number
 
 local Globals = require("Classes.globals")
 local Constants = require("Classes.constants")
@@ -11,27 +13,37 @@ local Settlement = {}
 Settlement.__index = Settlement
 
 function Settlement:new(x, y, tileName)
-  local obj = setmetatable({}, self)
-
-  obj.id = Globals.nextFreeSettlementId
-  Globals.nextFreeSettlementId = Globals.nextFreeSettlementId + 1
-  obj.worldMapEntity = game.surfaces[Constants.worldMapSurfaceName].create_entity{name = "settlement", position = {x, y}}
+  log("Settlement:new()")
+	local obj = setmetatable({}, self)
   obj.tileName = tileName
+	obj.width = 100
+	obj.height = 100
+
+  -- Set unique id
+	obj.id = Globals.nextFreeSettlementId
+	Globals.nextFreeSettlementId = Globals.nextFreeSettlementId + 1
+  
+	-- Create settlement entity on world map
+	obj.worldMapEntity = game.surfaces[Constants.worldMapSurfaceName].create_entity{name = "settlement", position = {x, y}, force = game.forces.player}
   EntityData:forEntity(obj.worldMapEntity).settlement = obj
 
+	-- Create settlement surface
+	obj:createSurface()
+	
   return obj
 end
 
 function Settlement:createSurface()
+  log("Settlement:createSurface()")
   local settlementSurface = game.create_surface(Constants.settlementSurfaceNameBase .. tostring(self.id), {
-    width = 100,
-    height = 100,
+    width = self.width,
+    height = self.height,
     default_enable_all_autoplace_controls = false,
     autoplace_controls = {},
     starting_area = "none",
     cliffiness = 0
   })
-  EntityData:forEntity(settlementSurface).settlement = self
+  EntityData:forSurface(settlementSurface).settlement = self
 end
 
 function Settlement:setTiles(left_top, right_bottom)
@@ -60,7 +72,8 @@ function Settlement:getSurface()
 end
 
 function Settlement:teleportToSurface(playerId)
-  local surface = self:getSurface()
+  log("Settlement:teleportToSurface()")
+	local surface = self:getSurface()
   if surface then
     local player = game.players[playerId]
     player.teleport({0, 0}, surface)
@@ -68,6 +81,7 @@ function Settlement:teleportToSurface(playerId)
 end
 
 function Settlement:clicked(playerId)
+  log("Settlement:clicked()")
   self:teleportToSurface(playerId)
 end
 

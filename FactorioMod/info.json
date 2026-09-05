@@ -4,9 +4,9 @@
   "title": "Frontier colony",
   "author": "Mabbus",
   "description": "Build a thriving colony.",
-  "factorio_version": "2.0",
+  "factorio_version": "2.1",
   "dependencies": [
-    "base >= 2.0.29",
-    "? space-age >= 2.0.29"
+    "base >= 2.1.0",
+    "? space-age >= 2.1.0"
   ]
 }

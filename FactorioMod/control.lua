@@ -22,13 +22,16 @@ script.on_init(function()
 end)
 
 local function force_remote_view(player)
+  log("force_remote_view (from " .. tostring(player.controller_type) .. tostring(player.physical_controller_type) .. tostring(player.stashed_controller_type) .. ")");
 	if not player or not player.valid then return end
 	if player.controller_type ~= defines.controllers.remote then
+		log("changed to remote view");
 		player.set_controller{type=defines.controllers.remote}
 	end
 end
 
 local function remove_player_character(player)
+  log("remove_player_character");
 	if not player or not player.valid then return end
 	local character = player.character
 	if character and character.valid then
@@ -38,13 +41,17 @@ local function remove_player_character(player)
 end
 
 script.on_event({defines.events.on_player_created, defines.events.on_player_respawned}, function(event)
+  log("on_player_created");
 	local player = game.get_player(event.player_index)
-	force_remote_view(player)
-	remove_player_character(player)
 	player.ticks_to_respawn = nil
+	player.disable_space_map = true
+	player.toggle_menu_leaves_remote_view = false
+	remove_player_character(player)
+	force_remote_view(player)
 end)
 
 script.on_event(defines.events.on_player_controller_changed, function(event)
+  log("on_player_controller_changed");
 	local player = game.get_player(event.player_index)
 	force_remote_view(player)
 end)

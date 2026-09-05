@@ -6,24 +6,47 @@ local EventQueue = require("Classes.eventQueue")
 
 script.on_init(function()
   log("on_init");
-  WorldMap:createSurface();
+
+	local surface = game.surfaces["nauvis"]
+	local mgs = surface.map_gen_settings
+	mgs.width = WorldMap.width
+	mgs.height = WorldMap.height
+	surface.map_gen_settings = mgs
+
+	if remote.interfaces["freeplay"] then
+		remote.call("freeplay", "set_disable_crashsite", true)
+		remote.call("freeplay", "set_skip_intro", true)
+  end
+		
 	EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
 end)
 
-script.on_event(defines.events.on_player_created, function(event)
-  log("on_player_created");
+local function force_remote_view(player)
+	if not player or not player.valid then return end
+	if player.controller_type ~= defines.controllers.remote then
+		player.set_controller{type=defines.controllers.remote}
+	end
+end
+
+local function remove_player_character(player)
+	if not player or not player.valid then return end
+	local character = player.character
+	if character and character.valid then
+		player.character = nil
+		character.destroy()
+	end
+end
+
+script.on_event({defines.events.on_player_created, defines.events.on_player_respawned}, function(event)
+	local player = game.get_player(event.player_index)
+	force_remote_view(player)
+	remove_player_character(player)
+	player.ticks_to_respawn = nil
 end)
 
-script.on_event(defines.events.on_cutscene_started, function(event)
-  log("on_cutscene_started");
-  local player = game.get_player(event.player_index);
-  player.exit_cutscene();
-end)
-
-script.on_event(defines.events.on_cutscene_cancelled, function(event)
-  log("on_cutscene_cancelled");
-  local player = game.get_player(event.player_index);
-  log("player.teleport: " .. tostring(player.teleport({x = 0, y = 0}, WorldMap:getSurface())));
+script.on_event(defines.events.on_player_controller_changed, function(event)
+	local player = game.get_player(event.player_index)
+	force_remote_view(player)
 end)
 
 script.on_nth_tick(10, function(event)

@@ -25,33 +25,6 @@ function WorldMap:loadWorldMap()
   end
 end
 
-function WorldMap:createSurface()
-  local WorldMapSurfaceSettings = {
-    width = WorldMap.width,
-    height = WorldMap.height,
-		default_enable_all_autoplace_controls = false,
-		autoplace_controls = {}, 
-		autoplace_settings = {
-				["tile"] = {
-						settings = {
-								["out-of-map"] = { frequency = "normal", size = "normal", richness = "normal" }
-						}
-				}
-		},
-		starting_area = "none",
-		cliffiness = 0
-  }
-  log("Surfaces before");
-  for name, surface in pairs(game.surfaces) do
-    log("Surface: " .. name);
-  end
-  game.create_surface(Constants.worldMapSurfaceName, WorldMapSurfaceSettings);
-	log("Surfaces after");
-	for name, surface in pairs(game.surfaces) do
-		log("Surface: " .. name);
-	end
-end
-
 function WorldMap:getSurface()
   return game.surfaces[Constants.worldMapSurfaceName]
 end
@@ -59,19 +32,19 @@ end
 function WorldMap:setTiles(left_top, right_bottom)
   local middleX = math.floor(self.width / 2) + 1;	-- This will generate from -a to +a if odd, and -a to +(a-1) if even. This is the same as the built in generation does
   local middleY = math.floor(self.height / 2) + 1;
-  local minX = math.max(1 - middleX, left_top.x);
-  local minY = math.max(1 - middleY, left_top.y);
-  local maxX = math.min(self.width - middleX, right_bottom.x-1);
-  local maxY = math.min(self.height - middleY, right_bottom.y-1);
-  if minX > maxX or minY > maxY then
-    log("Chunk outside map, skipping tile placement");
-    return;
-  end;
+  local minX = 1 - middleX;
+  local minY = 1 - middleY;
+  local maxX = self.width - middleX;
+  local maxY = self.height - middleY;
   local worldMapTiles = {};
-  log("Setting (" .. minX .. "," .. minY .. ")-(" .. maxX .. "," .. maxY .. ")");
-  for y = minY, maxY do
-    for x = minX, maxX do
-      table.insert(worldMapTiles, {name = self.tiles[y + middleY][x + middleX].tileType.tileName, position = {x, y}});
+  log("Setting (" .. left_top.x .. "," .. left_top.y .. ")-(" .. right_bottom.x - 1 .. "," .. right_bottom.y - 1 .. ")");
+  for y = left_top.y, right_bottom.y - 1 do
+    for x = left_top.x, right_bottom.x - 1 do
+      if x >= minX and x <= maxX and y >= minY and y <= maxY then
+				table.insert(worldMapTiles, {name = self.tiles[y + middleY][x + middleX].tileType.tileName, position = {x, y}});
+			else
+				table.insert(worldMapTiles, {name = 'out-of-map', position = {x, y}});
+			end
     end
   end
   self:getSurface().set_tiles(worldMapTiles);

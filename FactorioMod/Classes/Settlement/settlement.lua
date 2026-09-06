@@ -28,7 +28,8 @@ function Settlement:new(x, y, tileName)
   EntityData:forEntity(obj.worldMapEntity).settlement = obj
 
 	-- Create settlement surface
-	obj:createSurface()
+	local settlementSurface = obj:createSurface()
+	settlementSurface.create_entity{name = "living-quarters", position = {0, 0}, force = game.forces.player}  
 	
   return obj
 end
@@ -44,6 +45,7 @@ function Settlement:createSurface()
     cliffiness = 0
   })
   EntityData:forSurface(settlementSurface).settlement = self
+  return settlementSurface
 end
 
 function Settlement:setTiles(left_top, right_bottom)

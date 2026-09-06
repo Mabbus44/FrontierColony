@@ -16,9 +16,9 @@ script.on_init(function()
 	if remote.interfaces["freeplay"] then
 		remote.call("freeplay", "set_disable_crashsite", true)
 		remote.call("freeplay", "set_skip_intro", true)
+		EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
   end
 		
-	EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
 end)
 
 local function force_remote_view(player)

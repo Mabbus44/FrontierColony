@@ -12,9 +12,20 @@ inserter.energy_source = { type = "void" }
 local belt = table.deepcopy(data.raw["transport-belt"]["fast-transport-belt"])
 belt.name = "fc-belt"
 
+local assemblerItem = table.deepcopy(data.raw.item["assembling-machine-2"])
+assemblerItem.name = "fc-assembler"
+assemblerItem.place_result = "fc-assembler"
+
+local assemblerRecipe = table.deepcopy(data.raw.recipe["assembling-machine-2"])
+assemblerRecipe.name = "fc-assembler"
+assemblerRecipe.results = {
+	{ type = "item", name = "fc-assembler", amount = 1 }
+}
+
 data:extend({
   settlement,
   assembler,
   inserter,
-  belt
+  belt,
+	assemblerItem
 })

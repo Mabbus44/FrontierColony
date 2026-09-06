@@ -71,18 +71,19 @@ function Settlement:getSurface()
   return game.surfaces[Constants.settlementSurfaceNameBase .. tostring(self.id)]
 end
 
-function Settlement:teleportToSurface(playerId)
+function Settlement:teleportToSurface(player)
   log("Settlement:teleportToSurface()")
 	local surface = self:getSurface()
-  if surface then
-    local player = game.players[playerId]
+  if surface and player and player.valid then
     player.teleport({0, 0}, surface)
   end
 end
 
 function Settlement:clicked(playerId)
   log("Settlement:clicked()")
-  self:teleportToSurface(playerId)
+  local player = game.players[playerId]
+	player.opened = nil
+  self:teleportToSurface(player)
 end
 
 return Settlement

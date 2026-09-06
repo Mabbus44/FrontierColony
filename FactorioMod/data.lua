@@ -1,5 +1,6 @@
 local settlement = table.deepcopy(data.raw["container"]["steel-chest"])
 settlement.name = "settlement"
+settlement.minable = nil
 
 local fusionReactor = table.deepcopy(data.raw["fusion-reactor"]["fusion-reactor"])
 local livingQuarters = table.deepcopy(data.raw["container"]["steel-chest"])
@@ -22,6 +23,8 @@ livingQuarters.inventory_size = 100
 local solarAssembler = table.deepcopy(data.raw["assembling-machine"]["assembling-machine-1"])
 solarAssembler.name = "solar-assembler"
 solarAssembler.energy_source = { type = "void" }
+solarAssembler.minable = nil
+solarAssembler.next_upgrade = nil
 local solarAssemblerItem = table.deepcopy(data.raw.item["assembling-machine-1"])
 solarAssemblerItem.name = "solar-assembler"
 solarAssemblerItem.place_result = "solar-assembler"
@@ -33,6 +36,8 @@ solarAssemblerRecipe.ingredients = {{ amount = 25, name = "stone", type = "item"
 local solarInserter = table.deepcopy(data.raw["inserter"]["inserter"])
 solarInserter.name = "solar-inserter"
 solarInserter.energy_source = { type = "void" }
+solarInserter.minable = nil
+solarInserter.next_upgrade = nil
 local solarInserterItem = table.deepcopy(data.raw.item["inserter"])
 solarInserterItem.name = "solar-inserter"
 solarInserterItem.place_result = "solar-inserter"
@@ -43,6 +48,9 @@ solarInserterRecipe.ingredients = {{ amount = 5, name = "stone", type = "item" }
 
 local stoneBelt = table.deepcopy(data.raw["transport-belt"]["transport-belt"])
 stoneBelt.name = "stone-belt"
+stoneBelt.minable = nil
+stoneBelt.next_upgrade = nil
+stoneBelt.related_underground_belt = nil
 local stoneBeltItem = table.deepcopy(data.raw.item["transport-belt"])
 stoneBeltItem.name = "stone-belt"
 stoneBeltItem.place_result = "stone-belt"
@@ -51,44 +59,30 @@ stoneBeltRecipe.name = "stone-belt"
 stoneBeltRecipe.results = {{ type = "item", name = "stone-belt", amount = 1 }}
 stoneBeltRecipe.ingredients = {{ amount = 1, name = "stone", type = "item" }}
 
-local allowedItems = {
-	["stone"] = true
+local removeRecipes = {
+	"wooden-chest"
 }
-local allowedRecipes = {
-	["stone"] = true
-}
-local allowedPrototypes = {
-}
-  
--- Remove items
-for name, item in pairs(data.raw.item) do
-	if not allowedItems[name] then
-		data.raw.item[name] = nil
-		removedItems[name] = true
+local removedItems = {}
+for _,recipeName in ipairs(removeRecipes) do
+	removedItems[data.raw.recipe[recipeName]["results"][1].name] = true
+	log("recipe result: " .. data.raw.recipe[recipeName]["results"][1].name)
+	data.raw.recipe[recipeName] = nil
+end
+
+local count = 0
+for _ in pairs(removedItems) do count = count + 1 end
+log("list len: " .. count)
+for removedItemName, _ in pairs(removedItems) do
+	log("removedItemName: " .. removedItemName)
+	data.raw.item[removedItemName] = nil
+end
+
+for prototypeGroupName, prototypes in pairs(data.raw) do
+	for prototypeName, prototype in pairs(prototypes) do
+		if prototype.minable and removedItems[prototype.minable.result] then
+			prototype.minable = nil
+		end
 	end
-end
-
--- Remove recipes
-for name, recipe in pairs(data.raw.recipe) do
-	if not allowedRecipes[name] then
-		data.raw.recipe[name] = nil
-	end
-end
-
--- Remove entities
-for prototypeType, prototypes in pairs(data.raw) do
-    for name, prototype in pairs(prototypes) do
-        if prototype.minable then
-            if not allowedPrototypes[name] then
-                data.raw[prototypeType][name] = nil
-            end
-        end
-    end
-end
-
--- Remove technologies
-for name in pairs(data.raw.technology) do
-    data.raw.technology[name] = nil
 end
 
 data:extend({

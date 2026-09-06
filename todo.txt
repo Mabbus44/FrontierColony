@@ -33,4 +33,7 @@ Game design:
 Undesided things
 - We need something that replace science as the thing you always want to produce more of. People and military is kinda like that, but I feel you can get saturated on both.
 - There could be some objectives that give some bonuses
-
+- How should you build your first items? start with an assembler run by humans? (you have no electricity
+- Should you be allower to place crates? What happends when you deconstruct, where do they and their contents go?
+- How big should central vaults inventory be?
+- I´m leaning towards allowing crates and moderate vault size. When you deconstruct stuff go to the vault. If vault is full the deconstruct is canceled. There should be some way to throw stuff in the vault.

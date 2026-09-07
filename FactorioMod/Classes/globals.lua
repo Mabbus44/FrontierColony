@@ -3,7 +3,8 @@
 
 ---This is a global static object, hence no "new" method and no metatable
 local Globals = {
-  nextFreeSettlementId = 1
+  nextFreeSettlementId = 1,
+  entityRecipes = {}
 }
 
 return Globals

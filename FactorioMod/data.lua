@@ -59,30 +59,14 @@ stoneBeltRecipe.name = "stone-belt"
 stoneBeltRecipe.results = {{ type = "item", name = "stone-belt", amount = 1 }}
 stoneBeltRecipe.ingredients = {{ amount = 1, name = "stone", type = "item" }}
 
-local removeRecipes = {
-	"wooden-chest"
-}
-local removedItems = {}
-for _,recipeName in ipairs(removeRecipes) do
-	removedItems[data.raw.recipe[recipeName]["results"][1].name] = true
-	log("recipe result: " .. data.raw.recipe[recipeName]["results"][1].name)
-	data.raw.recipe[recipeName] = nil
+for recipeName, recipe in pairs(data.raw.recipe) do
+	recipe.hidden = true
+	recipe.hidden_in_factoriopedia = true
 end
 
-local count = 0
-for _ in pairs(removedItems) do count = count + 1 end
-log("list len: " .. count)
-for removedItemName, _ in pairs(removedItems) do
-	log("removedItemName: " .. removedItemName)
-	data.raw.item[removedItemName] = nil
-end
-
-for prototypeGroupName, prototypes in pairs(data.raw) do
-	for prototypeName, prototype in pairs(prototypes) do
-		if prototype.minable and removedItems[prototype.minable.result] then
-			prototype.minable = nil
-		end
-	end
+for removedItemName, item in pairs(data.raw.item) do
+	item.hidden = true
+	item.hidden_in_factoriopedia = true
 end
 
 data:extend({

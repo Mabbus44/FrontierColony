@@ -3,57 +3,23 @@ local Settlement = require("Classes.Settlement.settlement")
 local EntityData = require("Classes.entityData")
 local Constants = require("Classes.constants")
 local EventQueue = require("Classes.eventQueue")
+local Controls = require("Classes.controls")
 
 script.on_init(function()
   log("on_init");
-
-	local surface = game.surfaces["nauvis"]
-	local mgs = surface.map_gen_settings
-	mgs.width = WorldMap.width
-	mgs.height = WorldMap.height
-	surface.map_gen_settings = mgs
-
-	if remote.interfaces["freeplay"] then
-		remote.call("freeplay", "set_disable_crashsite", true)
-		remote.call("freeplay", "set_skip_intro", true)
-		EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
-  end
-		
+	Controls.initGame()		
 end)
-
-local function force_remote_view(player)
-  log("force_remote_view (from " .. tostring(player.controller_type) .. tostring(player.physical_controller_type) .. tostring(player.stashed_controller_type) .. ")");
-	if not player or not player.valid then return end
-	if player.controller_type ~= defines.controllers.remote then
-		log("changed to remote view");
-		player.set_controller{type=defines.controllers.remote}
-	end
-end
-
-local function remove_player_character(player)
-  log("remove_player_character");
-	if not player or not player.valid then return end
-	local character = player.character
-	if character and character.valid then
-		player.character = nil
-		character.destroy()
-	end
-end
 
 script.on_event({defines.events.on_player_created, defines.events.on_player_respawned}, function(event)
   log("on_player_created");
 	local player = game.get_player(event.player_index)
-	player.ticks_to_respawn = nil
-	player.disable_space_map = true
-	player.toggle_menu_leaves_remote_view = false
-	remove_player_character(player)
-	force_remote_view(player)
+	Controls.initPlayer(player)
 end)
 
 script.on_event(defines.events.on_player_controller_changed, function(event)
   log("on_player_controller_changed");
 	local player = game.get_player(event.player_index)
-	force_remote_view(player)
+	Controls.forceRemoteView(player)
 end)
 
 script.on_nth_tick(10, function(event)
@@ -62,17 +28,73 @@ end)
 
 script.on_event(defines.events.on_chunk_generated, function(event)
   log("on_chunk_generated " .. event.surface.name .. " " .. event.position.x .. "," .. event.position.y .. " (" .. event.area.left_top.x .. "," .. event.area.left_top.y .. ")-(" .. event.area.right_bottom.x .. "," .. event.area.right_bottom.y .. ")");
-
   if event.surface.name == WorldMap:getSurface().name then
     WorldMap:setTiles(event.area.left_top, event.area.right_bottom);
-  elseif event.surface.name:sub(1, #Constants.settlementSurfaceNameBase) == Constants.settlementSurfaceNameBase then
+  elseif Settlement:surfaceIsSettlement(event.surface.name) then
     EntityData:forSurface(event.surface).settlement:setTiles(event.area.left_top, event.area.right_bottom)
   end
 end)
 
 script.on_event(defines.events.on_gui_opened, function(event)
+  log("on_gui_opened");
   if event.entity and event.entity.name == "settlement" then
     local settlement = EntityData:forEntity(event.entity).settlement
     settlement:clicked(event.player_index)
+  end
+end)
+
+script.on_event(defines.events.on_built_entity, function(event)
+  log("on_built_entity");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:addGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.on_robot_built_entity, function(event)
+  log("on_robot_built_entity");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:addGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.script_raised_built, function(event)
+  log("script_raised_built");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:addGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.on_player_mined_entity, function(event)
+  log("on_player_mined_entity");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.on_robot_mined_entity, function(event)
+  log("on_robot_mined_entity");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.on_entity_died, function(event)
+  log("on_entity_died");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.script_raised_destroy, function(event)
+  log("script_raised_destroy");
+  local entity = event.entity
+  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
   end
 end)

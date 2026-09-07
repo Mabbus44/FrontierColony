@@ -1,6 +1,8 @@
 ---@class Settlement
 ---@field id number
 ---@field worldMapEntity LuaEntity
+---@field livingQuarters LuaEntity
+---@field ghosts LuaEntity[]
 ---@field tileName string
 ---@field width number
 ---@field height number
@@ -18,6 +20,7 @@ function Settlement:new(x, y, tileName)
   obj.tileName = tileName
 	obj.width = 100
 	obj.height = 100
+  obj.ghosts = {}
 
   -- Set unique id
 	obj.id = Globals.nextFreeSettlementId
@@ -29,8 +32,9 @@ function Settlement:new(x, y, tileName)
 
 	-- Create settlement surface
 	local settlementSurface = obj:createSurface()
-	settlementSurface.create_entity{name = "living-quarters", position = {0, 0}, force = game.forces.player}  
-	
+	obj.livingQuarters = settlementSurface.create_entity{name = "living-quarters", position = {0, 0}, force = game.forces.player}  
+  obj.livingQuarters.get_inventory(defines.inventory.chest).insert{ name = "stone", count = 100 }	
+  
   return obj
 end
 
@@ -86,6 +90,65 @@ function Settlement:clicked(playerId)
   local player = game.players[playerId]
 	player.opened = nil
   self:teleportToSurface(player)
+end
+
+function Settlement:tryBuildBlueprints()
+  if not (self.livingQuarters and self.livingQuarters.valid) then return end
+
+  local inventory = self.livingQuarters.get_inventory(defines.inventory.chest)
+  -- Iterate backwards since we remove completed ghosts.
+  for i = #self.ghosts, 1, -1 do
+    local ghost = self.ghosts[i]
+    if ghost and ghost.valid then
+      table.remove(self.ghosts, i)
+
+      local entityName = ghost.ghost_name
+      local recipe = Globals.entityRecipes[entityName]
+      if recipe then
+        local canBuild = true
+        for _, ingredient in pairs(recipe.ingredients) do
+          if inventory.get_item_count(ingredient.name) < ingredient.amount then
+            canBuild = false
+            break
+          end
+        end
+        if canBuild then
+          for _, ingredient in pairs(recipe.ingredients) do
+            inventory.remove{
+              name = ingredient.name,
+              count = ingredient.amount
+            }
+          end
+          local revived, _, _ = ghost.revive()
+          if revived then
+            table.remove(self.ghosts, i)
+          end
+        end
+      end
+    end
+  end
+end
+
+function Settlement:addGhost(ghost)
+  if ghost and ghost.valid then
+    table.insert(self.ghosts, ghost)
+    log("Settlement:addGhost() list length: " .. #self.ghosts)
+    self:tryBuildBlueprints()
+  end
+end
+
+function Settlement:removeGhost(ghost)
+  for i, candidate in pairs(self.ghosts) do
+    if candidate == ghost then
+      table.remove(self.ghosts, i)
+      log("Settlement:removeGhost() list length: " .. #self.ghosts)  
+      return
+    end
+  end
+end
+
+function Settlement:surfaceIsSettlement(surfaceName)
+  return surfaceName:sub(1, #Constants.settlementSurfaceNameBase) == Constants.settlementSurfaceNameBase  
 end
 
 return Settlement

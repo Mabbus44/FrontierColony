@@ -43,7 +43,7 @@ function Controls:initGame()
 	if remote.interfaces["freeplay"] then
 		remote.call("freeplay", "set_disable_crashsite", true)
 		remote.call("freeplay", "set_skip_intro", true)
-		EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
+		EventQueue:addEvent(60, WorldMap.addSettlement, nil, 3, 3);
 		end
 end
 

@@ -9,6 +9,7 @@ local Constants = require("Classes.constants")
 local WorldMapSquare = require("Classes.World.worldMapSquare")
 local Settlement = require("Classes.Settlement.settlement")
 local EntityData = require("Classes.entityData")
+local EventQueue = require("Classes.eventQueue")
 
 ---This is a global static object, hence no "new" method and no metatable
 local WorldMap = {}
@@ -73,6 +74,8 @@ function WorldMap:addSettlement(x, y)
 	self.tiles[y][x].settlement = Settlement:new(x, y, self.tiles[y][x].tileType.tileName)
   EntityData:forEntity(self.tiles[y][x].settlement.worldMapEntity).settlement = self.tiles[y][x].settlement
 end
+
+EventQueue:RegisterEvent(WorldMap.addSettlement, "WorldMap:addSettlement", WorldMap)
 
 -- Load the map first time the file is loaded
 WorldMap:loadWorldMap()

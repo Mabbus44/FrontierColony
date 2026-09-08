@@ -13,16 +13,34 @@ local EntityData = require("Classes.entityData")
 ---This is a global static object, hence no "new" method and no metatable
 local WorldMap = {}
 
+local function getData()
+  storage.frontier_colony = storage.frontier_colony or {}
+  storage.frontier_colony.worldMap = storage.frontier_colony.worldMap or {}
+  return storage.frontier_colony.worldMap
+end
+
 function WorldMap:loadWorldMap()
-  self.width = WorldMapRaw.width
-  self.height = WorldMapRaw.height
-  self.tiles = {}
+  local data = getData()
+  if data.tiles then
+    self.width = data.width
+    self.height = data.height
+    self.tiles = data.tiles
+    return
+  end
+
+  data.width = WorldMapRaw.width
+  data.height = WorldMapRaw.height
+  data.tiles = {}
   for y = 1, WorldMapRaw.height do
-    self.tiles[y] = {}
+    data.tiles[y] = {}
     for x = 1, WorldMapRaw.width do
-      self.tiles[y][x] = WorldMapSquare:new(TileType[WorldMapRaw.tiles[y][x]])
+      data.tiles[y][x] = WorldMapSquare:new(TileType[WorldMapRaw.tiles[y][x]])
     end
   end
+
+  self.width = data.width
+  self.height = data.height
+  self.tiles = data.tiles
 end
 
 function WorldMap:getSurface()

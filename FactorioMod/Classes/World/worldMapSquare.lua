@@ -12,6 +12,7 @@ local TileType = require("Enums/tileType")
 
 local WorldMapSquare = {}
 WorldMapSquare.__index = WorldMapSquare
+script.register_metatable("WorldMapSquare", WorldMapSquare)
 
 function WorldMapSquare:new(tileType)
   local obj = setmetatable({}, self)

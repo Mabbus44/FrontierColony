@@ -23,7 +23,7 @@ livingQuarters.inventory_size = 100
 local solarAssembler = table.deepcopy(data.raw["assembling-machine"]["assembling-machine-1"])
 solarAssembler.name = "solar-assembler"
 solarAssembler.energy_source = { type = "void" }
-solarAssembler.minable = nil
+solarAssembler.minable = { mining_time = 0.1, result = "solar-assembler" }
 solarAssembler.next_upgrade = nil
 local solarAssemblerItem = table.deepcopy(data.raw.item["assembling-machine-1"])
 solarAssemblerItem.name = "solar-assembler"
@@ -36,7 +36,7 @@ solarAssemblerRecipe.ingredients = {{ amount = 25, name = "stone", type = "item"
 local solarInserter = table.deepcopy(data.raw["inserter"]["inserter"])
 solarInserter.name = "solar-inserter"
 solarInserter.energy_source = { type = "void" }
-solarInserter.minable = nil
+solarInserter.minable = { mining_time = 0.1, result = "solar-inserter" }
 solarInserter.next_upgrade = nil
 local solarInserterItem = table.deepcopy(data.raw.item["inserter"])
 solarInserterItem.name = "solar-inserter"
@@ -48,7 +48,7 @@ solarInserterRecipe.ingredients = {{ amount = 5, name = "stone", type = "item" }
 
 local stoneBelt = table.deepcopy(data.raw["transport-belt"]["transport-belt"])
 stoneBelt.name = "stone-belt"
-stoneBelt.minable = nil
+stoneBelt.minable = { mining_time = 0.1, result = "stone-belt" }
 stoneBelt.next_upgrade = nil
 stoneBelt.related_underground_belt = nil
 local stoneBeltItem = table.deepcopy(data.raw.item["transport-belt"])
@@ -59,14 +59,33 @@ stoneBeltRecipe.name = "stone-belt"
 stoneBeltRecipe.results = {{ type = "item", name = "stone-belt", amount = 1 }}
 stoneBeltRecipe.ingredients = {{ amount = 1, name = "stone", type = "item" }}
 
-for recipeName, recipe in pairs(data.raw.recipe) do
-	recipe.hidden = true
-	recipe.hidden_in_factoriopedia = true
+for categoryName, category in pairs(data.raw) do
+	for prototypeName, prototype in pairs(category) do
+		if prototype.next_upgrade ~= nil then
+			prototype.next_upgrade = nil
+		end
+	end
 end
 
-for removedItemName, item in pairs(data.raw.item) do
-	item.hidden = true
-	item.hidden_in_factoriopedia = true
+local hiddenCategories = { "recipe", "item", "rail-planner", "item-with-entity-data", "capsule", "module", "gun", "ammo", "armor" }
+for _, category in ipairs(hiddenCategories) do
+	for prototypeName, prototype in pairs(data.raw[category]) do
+		prototype.hidden = true
+		prototype.hidden_in_factoriopedia = true
+	end
+end
+
+local hiddenPrototypes = {
+	{ "repair-tool", "repair-pack" },
+	{ "blueprint", "blueprint" },
+	{ "blueprint-book", "blueprint-book" },
+	{ "deconstruction-item", "deconstruction-planner" },
+	{ "upgrade-item", "upgrade-planner" },
+	{ "space-platform-starter-pack", "space-platform-starter-pack" }
+}
+for _, prototype in ipairs(hiddenPrototypes) do
+	data.raw[prototype[1]][prototype[2]].hidden = true
+	data.raw[prototype[1]][prototype[2]].hidden_in_factoriopedia = true
 end
 
 data:extend({

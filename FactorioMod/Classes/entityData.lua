@@ -1,8 +1,12 @@
 ---@class EntityData
 
-local EntityData = {
-  data = {}
-}
+local function getData()
+  storage.frontier_colony = storage.frontier_colony or {}
+  storage.frontier_colony.entityData = storage.frontier_colony.entityData or {}
+  return storage.frontier_colony.entityData
+end
+
+local EntityData = {}
 
 function EntityData:forEntity(entity)
 	return self:forEntityId(entity.unit_number)
@@ -13,10 +17,11 @@ function EntityData:forSurface(surface)
 end
 
 function EntityData:forEntityId(entityId)
-  if self.data[entityId] == nil then
-    self.data[entityId] = {}
+  local data = getData()
+  if data[entityId] == nil then
+    data[entityId] = {}
   end
-  return self.data[entityId]
+  return data[entityId]
 end
 
 return EntityData

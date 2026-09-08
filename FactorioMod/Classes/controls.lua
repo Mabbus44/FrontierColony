@@ -1,7 +1,6 @@
 ---@class Controls
 local EventQueue = require("Classes.eventQueue")
 local WorldMap = require("Classes.World.worldMap")
-local Globals = require("Classes.globals")
 
 local Controls= {
 }
@@ -33,22 +32,6 @@ function Controls:initPlayer(player)
 end
 
 
-function Controls:initEntityRecipeLookupTable()
-	Globals.entityRecipes = {}
-	for _, recipe in pairs(game.forces.player.recipes) do
-    if #recipe.products == 1 then
-			local item = prototypes.item[recipe.products[1].name]
-			if item and item.place_result then
-				Globals.entityRecipes[item.place_result.name] = recipe
-			end
-    end
-	end
-	log("recipe lookup table:")
-	for entityName, recipe in pairs(Globals.entityRecipes) do
-		log(entityName .. " -> " .. recipe.name)
-	end
-end
-
 
 function Controls:initGame()
 	local surface = game.surfaces["nauvis"]
@@ -61,8 +44,7 @@ function Controls:initGame()
 		remote.call("freeplay", "set_disable_crashsite", true)
 		remote.call("freeplay", "set_skip_intro", true)
 		EventQueue:addEvent(60, WorldMap.addSettlement, WorldMap, 3, 3);
-	end
-	self:initEntityRecipeLookupTable()
+		end
 end
 
 return Controls

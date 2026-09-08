@@ -19,7 +19,7 @@ end)
 script.on_event(defines.events.on_player_controller_changed, function(event)
   log("on_player_controller_changed");
 	local player = game.get_player(event.player_index)
-	Controls.forceRemoteView(player)
+	Controls:forceRemoteView(player)
 end)
 
 script.on_nth_tick(10, function(event)

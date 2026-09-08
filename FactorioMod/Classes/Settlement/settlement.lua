@@ -13,6 +13,7 @@ local EntityData = require("Classes.entityData")
 
 local Settlement = {}
 Settlement.__index = Settlement
+script.register_metatable("Settlement", Settlement)
 
 function Settlement:new(x, y, tileName)
   log("Settlement:new()")
@@ -23,8 +24,8 @@ function Settlement:new(x, y, tileName)
   obj.ghosts = {}
 
   -- Set unique id
-	obj.id = Globals.nextFreeSettlementId
-	Globals.nextFreeSettlementId = Globals.nextFreeSettlementId + 1
+  obj.id = Globals:get().nextFreeSettlementId
+  Globals:get().nextFreeSettlementId = Globals:get().nextFreeSettlementId + 1
   
 	-- Create settlement entity on world map
 	obj.worldMapEntity = game.surfaces[Constants.worldMapSurfaceName].create_entity{name = "settlement", position = {x, y}, force = game.forces.player}
@@ -97,7 +98,7 @@ function Settlement:tryBuildGhost(ghost)
   if not (ghost and ghost.valid) then return false end
 
   local inventory = self.livingQuarters.get_inventory(defines.inventory.chest)
-  local recipe = Globals.entityRecipes[ghost.ghost_name]
+  local recipe = Globals:getEntityRecipe(ghost.ghost_name)
   if not recipe then return false end
 
   for _, ingredient in pairs(recipe.ingredients) do

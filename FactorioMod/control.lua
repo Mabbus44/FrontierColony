@@ -7,13 +7,13 @@ local Controls = require("Classes.controls")
 
 script.on_init(function()
   log("on_init");
-	Controls.initGame()		
+  Controls:initGame()
 end)
 
 script.on_event({defines.events.on_player_created, defines.events.on_player_respawned}, function(event)
   log("on_player_created");
 	local player = game.get_player(event.player_index)
-	Controls.initPlayer(player)
+  Controls:initPlayer(player)
 end)
 
 script.on_event(defines.events.on_player_controller_changed, function(event)
@@ -24,6 +24,17 @@ end)
 
 script.on_nth_tick(10, function(event)
   EventQueue:runEvents(event.tick);
+end)
+
+script.on_nth_tick(1000, function()
+  for _, surface in pairs(game.surfaces) do
+    if Settlement:surfaceIsSettlement(surface.name) then
+      local settlement = EntityData:forSurface(surface).settlement
+      if settlement then
+        settlement:tryBuildBlueprints()
+      end
+    end
+  end
 end)
 
 script.on_event(defines.events.on_chunk_generated, function(event)
@@ -46,15 +57,7 @@ end)
 script.on_event(defines.events.on_built_entity, function(event)
   log("on_built_entity");
   local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
-    EntityData:forSurface(entity.surface).settlement:addGhost(entity)
-  end
-end)
-
-script.on_event(defines.events.on_robot_built_entity, function(event)
-  log("on_robot_built_entity");
-  local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+  if entity and entity.valid and entity.name == "entity-ghost" and Settlement:surfaceIsSettlement(entity.surface.name) then
     EntityData:forSurface(entity.surface).settlement:addGhost(entity)
   end
 end)
@@ -62,31 +65,15 @@ end)
 script.on_event(defines.events.script_raised_built, function(event)
   log("script_raised_built");
   local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+  if entity and entity.valid and entity.name == "entity-ghost" and Settlement:surfaceIsSettlement(entity.surface.name) then
     EntityData:forSurface(entity.surface).settlement:addGhost(entity)
-  end
-end)
-
-script.on_event(defines.events.on_player_mined_entity, function(event)
-  log("on_player_mined_entity");
-  local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
-    EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
-  end
-end)
-
-script.on_event(defines.events.on_robot_mined_entity, function(event)
-  log("on_robot_mined_entity");
-  local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
-    EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
   end
 end)
 
 script.on_event(defines.events.on_entity_died, function(event)
   log("on_entity_died");
   local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+  if entity and entity.valid and entity.name == "entity-ghost" and Settlement:surfaceIsSettlement(entity.surface.name) then
     EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
   end
 end)
@@ -94,7 +81,7 @@ end)
 script.on_event(defines.events.script_raised_destroy, function(event)
   log("script_raised_destroy");
   local entity = event.entity
-  if entity and entity.valid and entity.name == "entity-ghost" andSettlement:surfaceIsSettlement(entity.surface.name) then
+  if entity and entity.valid and entity.name == "entity-ghost" and Settlement:surfaceIsSettlement(entity.surface.name) then
     EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
   end
 end)

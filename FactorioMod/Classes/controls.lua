@@ -1,12 +1,12 @@
 ---@class Controls
 local EventQueue = require("Classes.eventQueue")
 local WorldMap = require("Classes.World.worldMap")
-local Globals = require("Classes.globals.lua")
+local Globals = require("Classes.globals")
 
 local Controls= {
 }
 
-local function Controls:forceRemoteView(player)
+function Controls:forceRemoteView(player)
   log("force_remote_view (from " .. tostring(player.controller_type) .. tostring(player.physical_controller_type) .. tostring(player.stashed_controller_type) .. ")");
 	if not player or not player.valid then return end
 	if player.controller_type ~= defines.controllers.remote then
@@ -14,7 +14,7 @@ local function Controls:forceRemoteView(player)
 	end
 end
 
-local function Controls:removePlayerCharacter(player)
+function Controls:removePlayerCharacter(player)
   log("remove_player_character");
 	if not player or not player.valid then return end
 	local character = player.character
@@ -24,7 +24,7 @@ local function Controls:removePlayerCharacter(player)
 	end
 end
 
-local function Controls:initPlayer(player)
+function Controls:initPlayer(player)
 	player.ticks_to_respawn = nil
 	player.disable_space_map = true
 	player.toggle_menu_leaves_remote_view = false
@@ -33,7 +33,7 @@ local function Controls:initPlayer(player)
 end
 
 
-local function Controls:initEntityRecipeLookupTable()
+function Controls:initEntityRecipeLookupTable()
 	Globals.entityRecipes = {}
 	for _, recipe in pairs(game.forces.player.recipes) do
     if #recipe.products == 1 then
@@ -50,7 +50,7 @@ local function Controls:initEntityRecipeLookupTable()
 end
 
 
-local function Controls:initGame()
+function Controls:initGame()
 	local surface = game.surfaces["nauvis"]
 	local mgs = surface.map_gen_settings
 	mgs.width = WorldMap.width

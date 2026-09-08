@@ -92,39 +92,42 @@ function Settlement:clicked(playerId)
   self:teleportToSurface(player)
 end
 
-function Settlement:tryBuildBlueprints()
+function Settlement:tryBuildGhost(ghost)
   if not (self.livingQuarters and self.livingQuarters.valid) then return end
+  if not (ghost and ghost.valid) then return false end
 
   local inventory = self.livingQuarters.get_inventory(defines.inventory.chest)
-  -- Iterate backwards since we remove completed ghosts.
+  local recipe = Globals.entityRecipes[ghost.ghost_name]
+  if not recipe then return false end
+
+  for _, ingredient in pairs(recipe.ingredients) do
+    if inventory.get_item_count(ingredient.name) < ingredient.amount then
+      return false
+    end
+  end
+
+  local revived = ghost.revive()
+  if revived then
+    for _, ingredient in pairs(recipe.ingredients) do
+      inventory.remove{
+        name = ingredient.name,
+        count = ingredient.amount
+      }
+    end
+    return true
+  end
+
+  return false
+end
+
+function Settlement:tryBuildBlueprints()
+  -- Iterate backwards since invalid and completed ghosts are removed.
   for i = #self.ghosts, 1, -1 do
     local ghost = self.ghosts[i]
-    if ghost and ghost.valid then
+    if not (ghost and ghost.valid) then
       table.remove(self.ghosts, i)
-
-      local entityName = ghost.ghost_name
-      local recipe = Globals.entityRecipes[entityName]
-      if recipe then
-        local canBuild = true
-        for _, ingredient in pairs(recipe.ingredients) do
-          if inventory.get_item_count(ingredient.name) < ingredient.amount then
-            canBuild = false
-            break
-          end
-        end
-        if canBuild then
-          for _, ingredient in pairs(recipe.ingredients) do
-            inventory.remove{
-              name = ingredient.name,
-              count = ingredient.amount
-            }
-          end
-          local revived, _, _ = ghost.revive()
-          if revived then
-            table.remove(self.ghosts, i)
-          end
-        end
-      end
+    elseif self:tryBuildGhost(ghost) then
+      table.remove(self.ghosts, i)
     end
   end
 end
@@ -133,7 +136,9 @@ function Settlement:addGhost(ghost)
   if ghost and ghost.valid then
     table.insert(self.ghosts, ghost)
     log("Settlement:addGhost() list length: " .. #self.ghosts)
-    self:tryBuildBlueprints()
+    if self:tryBuildGhost(ghost) then
+      self:removeGhost(ghost)
+    end
   end
 end
 

@@ -32,6 +32,7 @@ script.on_nth_tick(1000, function()
       local settlement = EntityData:forSurface(surface).settlement
       if settlement then
         settlement:tryBuildBlueprints()
+        settlement:tryDeconstructEntities()
       end
     end
   end
@@ -83,5 +84,21 @@ script.on_event(defines.events.script_raised_destroy, function(event)
   local entity = event.entity
   if entity and entity.valid and entity.name == "entity-ghost" and Settlement:surfaceIsSettlement(entity.surface.name) then
     EntityData:forSurface(entity.surface).settlement:removeGhost(entity)
+  end
+end)
+
+script.on_event(defines.events.on_marked_for_deconstruction, function(event)
+  log("on_marked_for_deconstruction");
+  local entity = event.entity
+  if entity and entity.valid and Settlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:addDeconstructionEntity(entity)
+  end
+end)
+
+script.on_event(defines.events.on_cancelled_deconstruction, function(event)
+  log("on_cancelled_deconstruction");
+  local entity = event.entity
+  if entity and entity.valid and Settlement:surfaceIsSettlement(entity.surface.name) then
+    EntityData:forSurface(entity.surface).settlement:removeDeconstructionEntity(entity)
   end
 end)

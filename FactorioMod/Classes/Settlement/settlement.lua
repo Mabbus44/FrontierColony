@@ -124,9 +124,7 @@ function Settlement:tryBuildBlueprints()
   -- Iterate backwards since invalid and completed ghosts are removed.
   for i = #self.ghosts, 1, -1 do
     local ghost = self.ghosts[i]
-    if not (ghost and ghost.valid) then
-      table.remove(self.ghosts, i)
-    elseif self:tryBuildGhost(ghost) then
+    if not (ghost and ghost.valid) or self:tryBuildGhost(ghost) then
       table.remove(self.ghosts, i)
     end
   end
@@ -134,10 +132,9 @@ end
 
 function Settlement:addGhost(ghost)
   if ghost and ghost.valid then
-    table.insert(self.ghosts, ghost)
-    log("Settlement:addGhost() list length: " .. #self.ghosts)
-    if self:tryBuildGhost(ghost) then
-      self:removeGhost(ghost)
+    if not self:tryBuildGhost(ghost) then
+      table.insert(self.ghosts, ghost)
+      log("Settlement:addGhost() list length: " .. #self.ghosts)
     end
   end
 end

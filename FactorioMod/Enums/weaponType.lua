@@ -1,0 +1,14 @@
+---@enum WeaponType
+
+local WeaponType = {
+  AXE = "AXE",
+  PISTOL = "PISTOL",
+  MACHINE_GUN = "MACHINE_GUN",
+  FLAME_THROWER = "FLAME_THROWER",
+  POISON_THROWER = "POISON_THROWER",
+  LASER_RIFLE = "LASER_RIFLE",
+  FREEZE_RAY = "FREEZE_RAY",
+  ROCKET_LAUNCHER = "ROCKET_LAUNCHER"
+}
+
+return WeaponType

@@ -4,6 +4,8 @@ local EntityData = require("Classes.entityData")
 local Constants = require("Classes.constants")
 local EventQueue = require("Classes.eventQueue")
 local Controls = require("Classes.controls")
+local SquadTemplateListGui = require("Classes.GUI.squadTemplateListGui")
+local SquadTemplateGui = require("Classes.GUI.squadTemplateGui")
 
 script.on_init(function()
   log("on_init");
@@ -102,3 +104,27 @@ script.on_event(defines.events.on_cancelled_deconstruction, function(event)
     EntityData:forSurface(entity.surface).settlement:removeDeconstructionEntity(entity)
   end
 end)
+
+script.on_event(defines.events.on_gui_click, function(event)
+  if SquadTemplateListGui.handleClick(event) then
+    return
+  end
+  SquadTemplateGui.handleClick(event)
+end)
+
+-- TODO TEMPORARY (lets player open gui with /squad-templates)
+commands.add_command(
+  "squad-templates",
+  "Open the squad template editor",
+  function(command)
+    if not command.player_index then
+      return
+    end
+
+    local player = game.get_player(command.player_index)
+    if player and player.valid then
+      SquadTemplateListGui.open(player)
+    end
+  end
+)
+-- TODO TEMPORARY

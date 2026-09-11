@@ -1,5 +1,6 @@
 ---@class Globals
 ---@field nextFreeSettlementId number
+---@field squadTemplates SquadTemplate[]
 
 local Globals = {}
 local entityRecipes
@@ -10,6 +11,7 @@ function Globals:get()
 
 	local globals = storage.frontier_colony.globals
 	globals.nextFreeSettlementId = globals.nextFreeSettlementId or 1
+	globals.squadTemplates = globals.squadTemplates or {}
 	return globals
 end
 

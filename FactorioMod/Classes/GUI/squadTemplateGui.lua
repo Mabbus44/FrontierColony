@@ -4,6 +4,7 @@ local SquadTemplate = require("Classes.Squad.squadTemplate")
 local TransportType = require("Enums.transportType")
 local WeaponType = require("Enums.weaponType")
 local SquadPrio = require("Enums.squadPrio")
+local Globals = require("Classes.globals")
 
 local SquadTemplateGui = {}
 
@@ -73,7 +74,7 @@ end
 local function readTemplate(root)
   local template = SquadTemplate:new()
 
-  template.name = root.template_name.text
+  template.name = root.content.name_row.template_name.text
 
   if template.name == "" then
     return nil, "A template name is required."
@@ -126,7 +127,7 @@ end
 function SquadTemplateGui.open(player, templateIndex, onSaved)
   close(player)
 
-  local templates = require("Classes.globals"):get().squadTemplates
+  local templates = Globals:get().squadTemplates
   local template
 
   if templateIndex then
@@ -154,7 +155,8 @@ function SquadTemplateGui.open(player, templateIndex, onSaved)
 
   local nameRow = content.add {
     type = "flow",
-    direction = "horizontal"
+    direction = "horizontal",
+		name = "name_row"
   }
 
   nameRow.add {

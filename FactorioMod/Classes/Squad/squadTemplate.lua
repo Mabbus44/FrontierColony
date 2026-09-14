@@ -6,10 +6,9 @@
 ---@field ammoMax table<WeaponType, number>
 ---@field prio SquadPrio
 
-local TransportType = require("Enums/transportType")
-local WeaponType = require("Enums/weaponType")
-local ResourceType = require("Enums/resourceType")
-local SquadPrio = require("Enums/squadPrio")
+local TransportType = require("Enums.transportType")
+local WeaponType = require("Enums.weaponType")
+local SquadPrio = require("Enums.squadPrio")
 
 local SquadTemplate = {}
 SquadTemplate.__index = SquadTemplate

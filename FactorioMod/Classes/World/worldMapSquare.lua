@@ -7,8 +7,8 @@
 ---@field resource ResourceSquare
 ---@field settlement Settlement
 ---@field tileType TileType
-
-local TileType = require("Enums/tileType")
+  
+local TileType = require("Enums.tileType")
 
 local WorldMapSquare = {}
 WorldMapSquare.__index = WorldMapSquare

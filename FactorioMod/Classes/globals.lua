@@ -39,4 +39,13 @@ function Globals:getEntityRecipe(entityName)
   return entityRecipes[entityName]
 end
 
+function Globals:getIndex(value, values)
+  for index, currentValue in ipairs(values) do
+    if currentValue == value then
+      return index
+    end
+  end
+  log("Error: could not find value " .. tostring(value) .. " in the provided list.")
+end
+
 return Globals

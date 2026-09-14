@@ -4,279 +4,239 @@ local SquadTemplate = require("Classes.Squad.squadTemplate")
 local TransportType = require("Enums.transportType")
 local WeaponType = require("Enums.weaponType")
 local SquadPrio = require("Enums.squadPrio")
+local GuiMaker = require("Classes.GUI.guiMaker")
 local Globals = require("Classes.globals")
 
 local SquadTemplateGui = {}
-
-local ROOT_NAME = "frontier_colony_squad_template_gui"
-
-local function findValue(values, value)
-  for index, currentValue in ipairs(values) do
-    if currentValue == value then
-      return index
-    end
-  end
-
-  return 1
-end
+local guiDefinition = {
+  type = "frame", name = "squadTemplateGui", direction = "vertical", caption = "Edit squad template", auto_center = true,
+  {
+    type = "scroll-pane", name = "content", direction = "vertical",
+    {
+      type = "flow", name = "peopleRow", direction = "horizontal",
+      { type = "label", caption = "Maximum people" },
+      { type = "textfieldInt", name = "maxPeople"}
+    },
+    {
+      type = "flow", name = "nameRow", direction = "horizontal",
+      { type = "label", caption = "Name" },
+      { type = "textfield", name = "templateName", text = "new template" }
+    },
+    { type = "label", caption = "Maximum transports" },
+    {
+      type = "flow", name = "maxBackpacksRow", direction = "horizontal",
+      { type = "label", caption = "Backpacks"},
+      { type = "textfieldInt", name = "maxBackpacks"}
+    },
+    {
+      type = "flow", name = "maxHorsesRow", direction = "horizontal",
+      { type = "label", caption = "Horses"},
+      { type = "textfieldInt", name = "maxHorses"}
+    },
+    {
+      type = "flow", name = "maxCarsRow", direction = "horizontal",
+      { type = "label", caption = "Cars"},
+      { type = "textfieldInt", name = "maxCars"}
+    },
+    {
+      type = "flow", name = "maxTrucksRow", direction = "horizontal",
+      { type = "label", caption = "Trucks"},
+      { type = "textfieldInt", name = "maxTrucks"}
+    },
+    {
+      type = "flow", name = "maxRoadTrainsRow", direction = "horizontal",
+      { type = "label", caption = "Road Trains"},
+      { type = "textfieldInt", name = "maxRoadTrains"}
+    },
+    { type = "label", caption = "Maximum weapons" },
+    {
+      type = "flow", name = "maxAxesRow", direction = "horizontal",
+      { type = "label", caption = "Axes"},
+      { type = "textfieldInt", name = "maxAxes"}
+    },
+    {
+      type = "flow", name = "maxPistolsRow", direction = "horizontal",
+      { type = "label", caption = "Pistols"},
+      { type = "textfieldInt", name = "maxPistols"}
+    },
+    {
+      type = "flow", name = "maxMachineGunsRow", direction = "horizontal",
+      { type = "label", caption = "Machine Guns"},
+      { type = "textfieldInt", name = "maxMachineGuns"}
+    },
+    {
+      type = "flow", name = "maxFlameThrowersRow", direction = "horizontal",
+      { type = "label", caption = "Flame Throwers"},
+      { type = "textfieldInt", name = "maxFlameThrowers"}
+    },
+    {
+      type = "flow", name = "maxPoisonThrowersRow", direction = "horizontal",
+      { type = "label", caption = "Poison Throwers"},
+      { type = "textfieldInt", name = "maxPoisonThrowers"}
+    },
+    {
+      type = "flow", name = "maxLaserRiflesRow", direction = "horizontal",
+      { type = "label", caption = "Laser Rifles"},
+      { type = "textfieldInt", name = "maxLaserRifles"}
+    },
+    {
+      type = "flow", name = "maxFreezeRaysRow", direction = "horizontal",
+      { type = "label", caption = "Freeze Rays"},
+      { type = "textfieldInt", name = "maxFreezeRays"}
+    },
+    {
+      type = "flow", name = "maxRocketLaunchersRow", direction = "horizontal",
+      { type = "label", caption = "Rocket Launchers"},
+      { type = "textfieldInt", name = "maxRocketLaunchers"}
+    },
+    { type = "label", caption = "Maximum ammo" },
+    {
+      type = "flow", name = "maxPistolAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Pistol Ammo"},
+      { type = "textfieldInt", name = "maxPistolAmmo"}
+    },
+    {
+      type = "flow", name = "maxMachineGunAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Machine Gun Ammo"},
+      { type = "textfieldInt", name = "maxMachineGunAmmo"}
+    },
+    {
+      type = "flow", name = "maxFlameThrowerAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Flame Thrower Ammo"},
+      { type = "textfieldInt", name = "maxFlameThrowerAmmo"}
+    },
+    {
+      type = "flow", name = "maxPoisonThrowerAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Poison Thrower Ammo"},
+      { type = "textfieldInt", name = "maxPoisonThrowerAmmo"}
+    },
+    {
+      type = "flow", name = "maxLaserRifleAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Laser Rifle Ammo"},
+      { type = "textfieldInt", name = "maxLaserRifleAmmo"}
+    },
+    {
+      type = "flow", name = "maxFreezeRayAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Freeze Ray Ammo"},
+      { type = "textfieldInt", name = "maxFreezeRayAmmo"}
+    },
+    {
+      type = "flow", name = "maxRocketLauncherAmmoRow", direction = "horizontal",
+      { type = "label", caption = "Rocket Launcher Ammo"},
+      { type = "textfieldInt", name = "maxRocketLauncherAmmo"}
+    },
+    { type = "label", caption = "Priority" },
+    { type = "drop-down", name = "priority", items = SquadPrio.ordered, selected_index = 1 }
+  },
+  {
+    type = "flow", name = "buttonRow", direction = "horizontal",
+    { type = "button", name = "save", caption = "Save" },
+    { type = "button", name = "cancel", caption = "Cancel" }
+  }
+}
 
 local function close(player)
-  local gui = player.gui.screen[ROOT_NAME]
+  local gui = player.gui.screen[guiDefinition.name]
   if gui and gui.valid then
     gui.destroy()
   end
 end
 
-local function addNumberField(parent, fieldName, caption, value)
-  local row = parent.add {
-    type = "flow",
-    direction = "horizontal"
-  }
-
-  row.add {
-    type = "label",
-    caption = caption
-  }
-
-  row.add {
-    type = "textfield",
-    name = fieldName,
-    text = tostring(value or 0),
-    numeric_only = true,
-    allow_decimal = false,
-    allow_negative = false
-  }
+local function saveTemplate(guiRoot)
+  if not guiRoot or not guiRoot.valid then
+    log("Error: Tried to save template with invalid GUI root.")
+    return false
+  end
+  local templates = Globals:get().squadTemplates
+  local templateId = guiRoot.tags and guiRoot.tags.templateIndex
+  local template = nil
+  if templateId and templates[templateId] then
+    template = templates[templateId]
+  else
+    template = SquadTemplate:new()
+    table.insert(templates, template)
+  end
+  template.peopleMax = tonumber(guiRoot.content.peopleRow.maxPeople.text)
+  template.name = guiRoot.content.nameRow.templateName.text
+  template.transportsMax[TransportType.BACKPACK] = tonumber(guiRoot.content.maxBackpacksRow.maxBackpacks.text)
+  template.transportsMax[TransportType.HORSE] = tonumber(guiRoot.content.maxHorsesRow.maxHorses.text)
+  template.transportsMax[TransportType.CAR] = tonumber(guiRoot.content.maxCarsRow.maxCars.text)
+  template.transportsMax[TransportType.TRUCK] = tonumber(guiRoot.content.maxTrucksRow.maxTrucks.text)
+  template.transportsMax[TransportType.ROAD_TRAIN] = tonumber(guiRoot.content.maxRoadTrainsRow.maxRoadTrains.text)
+  template.weaponsMax[WeaponType.AXE] = tonumber(guiRoot.content.maxAxesRow.maxAxes.text)
+  template.weaponsMax[WeaponType.PISTOL] = tonumber(guiRoot.content.maxPistolsRow.maxPistols.text)
+  template.weaponsMax[WeaponType.MACHINE_GUN] = tonumber(guiRoot.content.maxMachineGunsRow.maxMachineGuns.text)
+  template.weaponsMax[WeaponType.FLAME_THROWER] = tonumber(guiRoot.content.maxFlameThrowersRow.maxFlameThrowers.text)
+  template.weaponsMax[WeaponType.POISON_THROWER] = tonumber(guiRoot.content.maxPoisonThrowersRow.maxPoisonThrowers.text)
+  template.weaponsMax[WeaponType.LASER_RIFLE] = tonumber(guiRoot.content.maxLaserRiflesRow.maxLaserRifles.text)
+  template.weaponsMax[WeaponType.FREEZE_RAY] = tonumber(guiRoot.content.maxFreezeRaysRow.maxFreezeRays.text)
+  template.weaponsMax[WeaponType.ROCKET_LAUNCHER] = tonumber(guiRoot.content.maxRocketLaunchersRow.maxRocketLaunchers.text)
+  template.ammoMax[WeaponType.PISTOL] = tonumber(guiRoot.content.maxPistolAmmoRow.maxPistolAmmo.text)
+  template.ammoMax[WeaponType.MACHINE_GUN] = tonumber(guiRoot.content.maxMachineGunAmmoRow.maxMachineGunAmmo.text)
+  template.ammoMax[WeaponType.FLAME_THROWER] = tonumber(guiRoot.content.maxFlameThrowerAmmoRow.maxFlameThrowerAmmo.text)
+  template.ammoMax[WeaponType.POISON_THROWER] = tonumber(guiRoot.content.maxPoisonThrowerAmmoRow.maxPoisonThrowerAmmo.text)
+  template.ammoMax[WeaponType.LASER_RIFLE] = tonumber(guiRoot.content.maxLaserRifleAmmoRow.maxLaserRifleAmmo.text)
+  template.ammoMax[WeaponType.FREEZE_RAY] = tonumber(guiRoot.content.maxFreezeRayAmmoRow.maxFreezeRayAmmo.text) 
+  template.ammoMax[WeaponType.ROCKET_LAUNCHER] = tonumber(guiRoot.content.maxRocketLauncherAmmoRow.maxRocketLauncherAmmo.text)
+  template.prio = SquadPrio.ordered[guiRoot.content.priority.selected_index]
+  return true
 end
 
-local function addEnumSection(parent, title, prefix, values, source)
-  parent.add {
-    type = "label",
-    caption = title
-  }
-
-  for _, enumValue in ipairs(values) do
-    local fieldName = prefix .. enumValue
-    addNumberField(parent, fieldName, enumValue, source[enumValue] or 0)
-  end
-end
-
-local function getNumber(root, fieldName, caption)
-  local element = root[fieldName]
-  local value = tonumber(element.text)
-
-  if not value or value < 0 or value ~= math.floor(value) then
-    return nil, caption .. " must be a non-negative whole number."
-  end
-
-  return value
-end
-
-local function readTemplate(root)
-  local template = SquadTemplate:new()
-
-  template.name = root.content.name_row.template_name.text
-
-  if template.name == "" then
-    return nil, "A template name is required."
-  end
-
-  local peopleMax, errorMessage = getNumber(root, "people_max", "Maximum people")
-  if not peopleMax then
-    return nil, errorMessage
-  end
-  template.peopleMax = peopleMax
-
-  for _, transportType in ipairs(TransportType.ordered) do
-    local fieldName = "transport_" .. transportType
-    local value, fieldError = getNumber(root, fieldName, transportType)
-
-    if not value then
-      return nil, fieldError
-    end
-
-    template.transportsMax[transportType] = value
-  end
-
-  for _, weaponType in ipairs(WeaponType.ordered) do
-    local weaponField = "weapon_" .. weaponType
-    local ammoField = "ammo_" .. weaponType
-
-    local weaponValue, weaponError =
-      getNumber(root, weaponField, weaponType .. " maximum")
-
-    if not weaponValue then
-      return nil, weaponError
-    end
-
-    local ammoValue, ammoError =
-      getNumber(root, ammoField, weaponType .. " ammunition maximum")
-
-    if not ammoValue then
-      return nil, ammoError
-    end
-
-    template.weaponsMax[weaponType] = weaponValue
-    template.ammoMax[weaponType] = ammoValue
-  end
-
-  template.prio = SquadPrio.ordered[root.priority.selected_index]
-
-  return template
-end
-
-function SquadTemplateGui.open(player, templateIndex, onSaved)
+function SquadTemplateGui.open(player, templateIndex)
   close(player)
-
+  local guiRoot = GuiMaker.getGui(player.gui.screen, guiDefinition)
   local templates = Globals:get().squadTemplates
   local template
-
-  if templateIndex then
-    template = table.deepcopy(templates[templateIndex])
+  if templateIndex and templates[templateIndex] then
+    template = templates[templateIndex]
+    guiRoot.tags = { templateIndex = templateIndex }
   else
     template = SquadTemplate:new()
   end
-
-  local root = player.gui.screen.add {
-    type = "frame",
-    name = ROOT_NAME,
-    direction = "vertical",
-    caption = templateIndex and "Edit squad template" or "New squad template"
-  }
-
-  root.auto_center = true
-
-  local content = root.add {
-    type = "scroll-pane",
-    name = "content",
-    direction = "vertical"
-  }
-
-  addNumberField(content, "people_max", "Maximum people", template.peopleMax)
-
-  local nameRow = content.add {
-    type = "flow",
-    direction = "horizontal",
-		name = "name_row"
-  }
-
-  nameRow.add {
-    type = "label",
-    caption = "Name"
-  }
-
-  nameRow.add {
-    type = "textfield",
-    name = "template_name",
-    text = template.name
-  }
-
-  addEnumSection(
-    content,
-    "Maximum transports",
-    "transport_",
-    TransportType.ordered,
-    template.transportsMax
-  )
-
-  addEnumSection(
-    content,
-    "Maximum weapons",
-    "weapon_",
-    WeaponType.ordered,
-    template.weaponsMax
-  )
-
-  addEnumSection(
-    content,
-    "Maximum ammunition",
-    "ammo_",
-    WeaponType.ordered,
-    template.ammoMax
-  )
-
-  content.add {
-    type = "label",
-    caption = "Priority"
-  }
-
-  content.add {
-    type = "drop-down",
-    name = "priority",
-    items = SquadPrio.ordered,
-    selected_index = findValue(SquadPrio.ordered, template.prio)
-  }
-
-  root.add {
-    type = "label",
-    name = "error",
-    caption = ""
-  }
-
-  local buttons = root.add {
-    type = "flow",
-    direction = "horizontal"
-  }
-
-  buttons.add {
-    type = "button",
-    name = "save",
-    caption = "Save"
-  }
-
-  buttons.add {
-    type = "button",
-    name = "cancel",
-    caption = "Cancel"
-  }
-
-  root.tags = {
-    template_index = templateIndex
-  }
+  guiRoot.content.peopleRow.maxPeople.text = template.peopleMax or 0
+  guiRoot.content.nameRow.templateName.text = template.name or "New squad template"
+  guiRoot.content.maxBackpacksRow.maxBackpacks.text = template.transportsMax[TransportType.BACKPACK] or 0
+  guiRoot.content.maxHorsesRow.maxHorses.text = template.transportsMax[TransportType.HORSE] or 0
+  guiRoot.content.maxCarsRow.maxCars.text = template.transportsMax[TransportType.CAR] or 0
+  guiRoot.content.maxTrucksRow.maxTrucks.text = template.transportsMax[TransportType.TRUCK] or 0
+  guiRoot.content.maxRoadTrainsRow.maxRoadTrains.text = template.transportsMax[TransportType.ROAD_TRAIN] or 0
+  guiRoot.content.maxAxesRow.maxAxes.text = template.weaponsMax[WeaponType.AXE] or 0
+  guiRoot.content.maxPistolsRow.maxPistols.text = template.weaponsMax[WeaponType.PISTOL] or 0
+  guiRoot.content.maxMachineGunsRow.maxMachineGuns.text = template.weaponsMax[WeaponType.MACHINE_GUN] or 0
+  guiRoot.content.maxFlameThrowersRow.maxFlameThrowers.text = template.weaponsMax[WeaponType.FLAME_THROWER] or 0
+  guiRoot.content.maxPoisonThrowersRow.maxPoisonThrowers.text = template.weaponsMax[WeaponType.POISON_THROWER] or 0
+  guiRoot.content.maxLaserRiflesRow.maxLaserRifles.text = template.weaponsMax[WeaponType.LASER_RIFLE] or 0
+  guiRoot.content.maxFreezeRaysRow.maxFreezeRays.text = template.weaponsMax[WeaponType.FREEZE_RAY] or 0
+  guiRoot.content.maxRocketLaunchersRow.maxRocketLaunchers.text = template.weaponsMax[WeaponType.ROCKET_LAUNCHER] or 0
+  guiRoot.content.maxPistolAmmoRow.maxPistolAmmo.text = template.ammoMax[WeaponType.PISTOL] or 0
+  guiRoot.content.maxMachineGunAmmoRow.maxMachineGunAmmo.text = template.ammoMax[WeaponType.MACHINE_GUN] or 0
+  guiRoot.content.maxFlameThrowerAmmoRow.maxFlameThrowerAmmo.text = template.ammoMax[WeaponType.FLAME_THROWER] or 0
+  guiRoot.content.maxPoisonThrowerAmmoRow.maxPoisonThrowerAmmo.text = template.ammoMax[WeaponType.POISON_THROWER] or 0
+  guiRoot.content.maxLaserRifleAmmoRow.maxLaserRifleAmmo.text = template.ammoMax[WeaponType.LASER_RIFLE] or 0
+  guiRoot.content.maxFreezeRayAmmoRow.maxFreezeRayAmmo.text = template.ammoMax[WeaponType.FREEZE_RAY] or 0
+  guiRoot.content.maxRocketLauncherAmmoRow.maxRocketLauncherAmmo.text = template.ammoMax[WeaponType.ROCKET_LAUNCHER] or 0
+  guiRoot.content.priority.selected_index = Globals:getIndex(template.prio or SquadPrio.ordered[1], SquadPrio.ordered)
 end
 
 function SquadTemplateGui.handleClick(event)
-  local element = event.element
-  if not element or not element.valid then
-    return false
-  end
-
-  local root = element
-  while root and root.valid and root.name ~= ROOT_NAME do
+  local root = event.element
+  while root and root.valid and root.name ~= guiDefinition.name do
     root = root.parent
   end
-
-  if not root or not root.valid then
+  if not root or not root.valid or root.name ~= guiDefinition.name then
     return false
   end
-
   local player = game.get_player(event.player_index)
-
+  local element = event.element
   if element.name == "cancel" then
     close(player)
     return true
   end
-
   if element.name == "save" then
-    local template, errorMessage = readTemplate(root)
-
-    if not template then
-      root.error.caption = errorMessage
-      return true
-    end
-
-    local globals = require("Classes.globals"):get()
-    local templateIndex = root.tags.template_index
-
-    if templateIndex then
-      globals.squadTemplates[templateIndex] = template
-    else
-      table.insert(globals.squadTemplates, template)
-    end
-
+    saveTemplate(root)
     close(player)
     return true
   end
-
   return true
 end
 

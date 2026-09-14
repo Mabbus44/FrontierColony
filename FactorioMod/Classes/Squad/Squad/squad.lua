@@ -16,10 +16,10 @@
 ---@field prio SquadPrio
 ---@field surface LuaSurface
 
-local TransportType = require("Enums/transportType")
-local WeaponType = require("Enums/weaponType")
-local ResourceType = require("Enums/resourceType")
-local SquadPrio = require("Enums/squadPrio")
+local TransportType = require("Enums.transportType")
+local WeaponType = require("Enums.weaponType")
+local ResourceType = require("Enums.resourceType")
+local SquadPrio = require("Enums.squadPrio")
 
 local Squad = {}
 Squad.__index = Squad

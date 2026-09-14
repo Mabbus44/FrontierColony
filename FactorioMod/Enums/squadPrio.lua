@@ -7,4 +7,11 @@ local SquadPrio = {
   SPEED_OVER_PEOPLE = "SPEED_OVER_PEOPLE"         -- Leave people behind if necessary. Leave place for all people when vehicles are filled (uness people wont fit annyway). If you lose vehicles on the road, leave people behind if necessary.
 }
 
+SquadPrio.ordered = {
+  SquadPrio.MAXIMIZE_RESOURCES,
+  SquadPrio.PRESERVE_RESOURCES,
+  SquadPrio.SPEED_OVER_RESOURCES,
+  SquadPrio.SPEED_OVER_PEOPLE
+}
+
 return SquadPrio

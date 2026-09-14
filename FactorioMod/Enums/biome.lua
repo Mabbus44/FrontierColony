@@ -8,4 +8,12 @@ local Biome = {
   DESERT = "DESERT"
 }
 
+Biome.ordered = {
+  Biome.LAVA,
+  Biome.GRASS,
+  Biome.ICE,
+  Biome.SWAMP,
+  Biome.DESERT
+}
+
 return Biome

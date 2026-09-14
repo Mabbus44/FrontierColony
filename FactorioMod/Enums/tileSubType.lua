@@ -7,4 +7,11 @@ local TileSubType = {
   LAND = "LAND"
 }
 
+TileSubType.ordered = {
+  TileSubType.MOUNTAIN,
+  TileSubType.LAKE,
+  TileSubType.FOREST,
+  TileSubType.LAND
+}
+ 
 return TileSubType

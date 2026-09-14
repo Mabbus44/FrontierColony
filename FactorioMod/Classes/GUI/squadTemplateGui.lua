@@ -1,3 +1,5 @@
+---@class SquadTemplateGui
+
 local SquadTemplate = require("Classes.Squad.squadTemplate")
 local TransportType = require("Enums.transportType")
 local WeaponType = require("Enums.weaponType")
@@ -6,32 +8,6 @@ local SquadPrio = require("Enums.squadPrio")
 local SquadTemplateGui = {}
 
 local ROOT_NAME = "frontier_colony_squad_template_gui"
-
-local transportTypes = {
-  TransportType.BACKPACK,
-  TransportType.HORSE,
-  TransportType.CAR,
-  TransportType.TRUCK,
-  TransportType.ROAD_TRAIN
-}
-
-local weaponTypes = {
-  WeaponType.AXE,
-  WeaponType.PISTOL,
-  WeaponType.MACHINE_GUN,
-  WeaponType.FLAME_THROWER,
-  WeaponType.POISON_THROWER,
-  WeaponType.LASER_RIFLE,
-  WeaponType.FREEZE_RAY,
-  WeaponType.ROCKET_LAUNCHER
-}
-
-local priorities = {
-  SquadPrio.MAXIMIZE_RESOURCES,
-  SquadPrio.PRESERVE_RESOURCES,
-  SquadPrio.SPEED_OVER_RESOURCES,
-  SquadPrio.SPEED_OVER_PEOPLE
-}
 
 local function findValue(values, value)
   for index, currentValue in ipairs(values) do
@@ -109,7 +85,7 @@ local function readTemplate(root)
   end
   template.peopleMax = peopleMax
 
-  for _, transportType in ipairs(transportTypes) do
+  for _, transportType in ipairs(TransportType.ordered) do
     local fieldName = "transport_" .. transportType
     local value, fieldError = getNumber(root, fieldName, transportType)
 
@@ -120,7 +96,7 @@ local function readTemplate(root)
     template.transportsMax[transportType] = value
   end
 
-  for _, weaponType in ipairs(weaponTypes) do
+  for _, weaponType in ipairs(WeaponType.ordered) do
     local weaponField = "weapon_" .. weaponType
     local ammoField = "ammo_" .. weaponType
 
@@ -142,7 +118,7 @@ local function readTemplate(root)
     template.ammoMax[weaponType] = ammoValue
   end
 
-  template.prio = priorities[root.priority.selected_index]
+  template.prio = SquadPrio.ordered[root.priority.selected_index]
 
   return template
 end
@@ -196,7 +172,7 @@ function SquadTemplateGui.open(player, templateIndex, onSaved)
     content,
     "Maximum transports",
     "transport_",
-    transportTypes,
+    TransportType.ordered,
     template.transportsMax
   )
 
@@ -204,7 +180,7 @@ function SquadTemplateGui.open(player, templateIndex, onSaved)
     content,
     "Maximum weapons",
     "weapon_",
-    weaponTypes,
+    WeaponType.ordered,
     template.weaponsMax
   )
 
@@ -212,7 +188,7 @@ function SquadTemplateGui.open(player, templateIndex, onSaved)
     content,
     "Maximum ammunition",
     "ammo_",
-    weaponTypes,
+    WeaponType.ordered,
     template.ammoMax
   )
 
@@ -224,8 +200,8 @@ function SquadTemplateGui.open(player, templateIndex, onSaved)
   content.add {
     type = "drop-down",
     name = "priority",
-    items = priorities,
-    selected_index = findValue(priorities, template.prio)
+    items = SquadPrio.ordered,
+    selected_index = findValue(SquadPrio.ordered, template.prio)
   }
 
   root.add {

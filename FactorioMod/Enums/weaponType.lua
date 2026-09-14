@@ -11,4 +11,15 @@ local WeaponType = {
   ROCKET_LAUNCHER = "ROCKET_LAUNCHER"
 }
 
+WeaponType.ordered = {
+  WeaponType.AXE,
+  WeaponType.PISTOL,
+  WeaponType.MACHINE_GUN,
+  WeaponType.FLAME_THROWER,
+  WeaponType.POISON_THROWER,
+  WeaponType.LASER_RIFLE,
+  WeaponType.FREEZE_RAY,
+  WeaponType.ROCKET_LAUNCHER
+}
+
 return WeaponType

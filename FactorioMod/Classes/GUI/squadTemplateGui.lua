@@ -193,28 +193,28 @@ function SquadTemplateGui.open(player, templateIndex)
   else
     template = SquadTemplate:new()
   end
-  guiRoot.content.peopleRow.maxPeople.text = template.peopleMax or 0
+  guiRoot.content.peopleRow.maxPeople.text = tostring(template.peopleMax or 0)
   guiRoot.content.nameRow.templateName.text = template.name or "New squad template"
-  guiRoot.content.maxBackpacksRow.maxBackpacks.text = template.transportsMax[TransportType.BACKPACK] or 0
-  guiRoot.content.maxHorsesRow.maxHorses.text = template.transportsMax[TransportType.HORSE] or 0
-  guiRoot.content.maxCarsRow.maxCars.text = template.transportsMax[TransportType.CAR] or 0
-  guiRoot.content.maxTrucksRow.maxTrucks.text = template.transportsMax[TransportType.TRUCK] or 0
-  guiRoot.content.maxRoadTrainsRow.maxRoadTrains.text = template.transportsMax[TransportType.ROAD_TRAIN] or 0
-  guiRoot.content.maxAxesRow.maxAxes.text = template.weaponsMax[WeaponType.AXE] or 0
-  guiRoot.content.maxPistolsRow.maxPistols.text = template.weaponsMax[WeaponType.PISTOL] or 0
-  guiRoot.content.maxMachineGunsRow.maxMachineGuns.text = template.weaponsMax[WeaponType.MACHINE_GUN] or 0
-  guiRoot.content.maxFlameThrowersRow.maxFlameThrowers.text = template.weaponsMax[WeaponType.FLAME_THROWER] or 0
-  guiRoot.content.maxPoisonThrowersRow.maxPoisonThrowers.text = template.weaponsMax[WeaponType.POISON_THROWER] or 0
-  guiRoot.content.maxLaserRiflesRow.maxLaserRifles.text = template.weaponsMax[WeaponType.LASER_RIFLE] or 0
-  guiRoot.content.maxFreezeRaysRow.maxFreezeRays.text = template.weaponsMax[WeaponType.FREEZE_RAY] or 0
-  guiRoot.content.maxRocketLaunchersRow.maxRocketLaunchers.text = template.weaponsMax[WeaponType.ROCKET_LAUNCHER] or 0
-  guiRoot.content.maxPistolAmmoRow.maxPistolAmmo.text = template.ammoMax[WeaponType.PISTOL] or 0
-  guiRoot.content.maxMachineGunAmmoRow.maxMachineGunAmmo.text = template.ammoMax[WeaponType.MACHINE_GUN] or 0
-  guiRoot.content.maxFlameThrowerAmmoRow.maxFlameThrowerAmmo.text = template.ammoMax[WeaponType.FLAME_THROWER] or 0
-  guiRoot.content.maxPoisonThrowerAmmoRow.maxPoisonThrowerAmmo.text = template.ammoMax[WeaponType.POISON_THROWER] or 0
-  guiRoot.content.maxLaserRifleAmmoRow.maxLaserRifleAmmo.text = template.ammoMax[WeaponType.LASER_RIFLE] or 0
-  guiRoot.content.maxFreezeRayAmmoRow.maxFreezeRayAmmo.text = template.ammoMax[WeaponType.FREEZE_RAY] or 0
-  guiRoot.content.maxRocketLauncherAmmoRow.maxRocketLauncherAmmo.text = template.ammoMax[WeaponType.ROCKET_LAUNCHER] or 0
+  guiRoot.content.maxBackpacksRow.maxBackpacks.text = tostring(template.transportsMax[TransportType.BACKPACK] or 0)
+  guiRoot.content.maxHorsesRow.maxHorses.text = tostring(template.transportsMax[TransportType.HORSE] or 0)
+  guiRoot.content.maxCarsRow.maxCars.text = tostring(template.transportsMax[TransportType.CAR] or 0)
+  guiRoot.content.maxTrucksRow.maxTrucks.text = tostring(template.transportsMax[TransportType.TRUCK] or 0)
+  guiRoot.content.maxRoadTrainsRow.maxRoadTrains.text = tostring(template.transportsMax[TransportType.ROAD_TRAIN] or 0)
+  guiRoot.content.maxAxesRow.maxAxes.text = tostring(template.weaponsMax[WeaponType.AXE] or 0)
+  guiRoot.content.maxPistolsRow.maxPistols.text = tostring(template.weaponsMax[WeaponType.PISTOL] or 0)
+  guiRoot.content.maxMachineGunsRow.maxMachineGuns.text = tostring(template.weaponsMax[WeaponType.MACHINE_GUN] or 0)
+  guiRoot.content.maxFlameThrowersRow.maxFlameThrowers.text = tostring(template.weaponsMax[WeaponType.FLAME_THROWER] or 0)
+  guiRoot.content.maxPoisonThrowersRow.maxPoisonThrowers.text = tostring(template.weaponsMax[WeaponType.POISON_THROWER] or 0)
+  guiRoot.content.maxLaserRiflesRow.maxLaserRifles.text = tostring(template.weaponsMax[WeaponType.LASER_RIFLE] or 0)
+  guiRoot.content.maxFreezeRaysRow.maxFreezeRays.text = tostring(template.weaponsMax[WeaponType.FREEZE_RAY] or 0)
+  guiRoot.content.maxRocketLaunchersRow.maxRocketLaunchers.text = tostring(template.weaponsMax[WeaponType.ROCKET_LAUNCHER] or 0)
+  guiRoot.content.maxPistolAmmoRow.maxPistolAmmo.text = tostring(template.ammoMax[WeaponType.PISTOL] or 0)
+  guiRoot.content.maxMachineGunAmmoRow.maxMachineGunAmmo.text = tostring(template.ammoMax[WeaponType.MACHINE_GUN] or 0)
+  guiRoot.content.maxFlameThrowerAmmoRow.maxFlameThrowerAmmo.text = tostring(template.ammoMax[WeaponType.FLAME_THROWER] or 0)
+  guiRoot.content.maxPoisonThrowerAmmoRow.maxPoisonThrowerAmmo.text = tostring(template.ammoMax[WeaponType.POISON_THROWER] or 0)
+  guiRoot.content.maxLaserRifleAmmoRow.maxLaserRifleAmmo.text = tostring(template.ammoMax[WeaponType.LASER_RIFLE] or 0)
+  guiRoot.content.maxFreezeRayAmmoRow.maxFreezeRayAmmo.text = tostring(template.ammoMax[WeaponType.FREEZE_RAY] or 0)
+  guiRoot.content.maxRocketLauncherAmmoRow.maxRocketLauncherAmmo.text = tostring(template.ammoMax[WeaponType.ROCKET_LAUNCHER] or 0)
   guiRoot.content.priority.selected_index = Globals:getIndex(template.prio or SquadPrio.ordered[1], SquadPrio.ordered)
 end
 

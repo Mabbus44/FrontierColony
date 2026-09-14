@@ -2,16 +2,14 @@
 
 local GuiMaker = {}
 
-function GuiMaker.getGui(guiRoot, guiDefinition)
-  if guiDefinition.name == nil or guiDefinition.name == "" then
-    log("Error: guiDefinition must have a valid name.")
-    return nil
+local function extractKeyVal(object)
+  local ret = {}
+  for key, value in pairs(object) do
+    if type(key) ~= "number" then
+      ret[key] = value
+    end
   end
-  if guiRoot[guiDefinition.name] then
-    return guiRoot[guiDefinition.name]
-  end
-  local guiElement = buildGuiElement(guiRoot, guiDefinition)
-  return guiElement
+  return ret
 end
 
 local function buildGuiElement(parentGuiElement, guiDefinition)
@@ -34,14 +32,16 @@ local function buildGuiElement(parentGuiElement, guiDefinition)
   return newGuiElement
 end
 
-local function extractKeyVal(object)
-  local ret = {}
-  for key, value in pairs(object) do
-    if type(key) ~= "number" then
-      ret[key] = value
-    end
+function GuiMaker.getGui(guiRoot, guiDefinition)
+  if guiDefinition.name == nil or guiDefinition.name == "" then
+    log("Error: guiDefinition must have a valid name.")
+    return nil
   end
-  return ret
+  if guiRoot[guiDefinition.name] then
+    return guiRoot[guiDefinition.name]
+  end
+  local guiElement = buildGuiElement(guiRoot, guiDefinition)
+  return guiElement
 end
 
 return GuiMaker

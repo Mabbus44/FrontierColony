@@ -9,7 +9,7 @@ local Globals = require("Classes.globals")
 
 local SquadTemplateGui = {}
 local guiDefinition = {
-  type = "frame", name = "squadTemplateGui", direction = "vertical", caption = "Edit squad template", auto_center = true,
+  type = "frame", name = "squadTemplateGui", direction = "vertical", caption = "Edit squad template",
   {
     type = "scroll-pane", name = "content", direction = "vertical",
     {
@@ -183,6 +183,7 @@ end
 function SquadTemplateGui.open(player, templateIndex)
   close(player)
   local guiRoot = GuiMaker.getGui(player.gui.screen, guiDefinition)
+	guiRoot.auto_center = true
   local templates = Globals:get().squadTemplates
   local template = Globals.getById(templates, templateIndex)
   if template then

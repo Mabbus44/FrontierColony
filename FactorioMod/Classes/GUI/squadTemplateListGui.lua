@@ -2,10 +2,11 @@ local Globals = require("Classes.globals")
 local SquadTemplateGui = require("Classes.GUI.squadTemplateGui")
 local GuiMaker = require("Classes.GUI.guiMaker")
 local Globals = require("Classes.globals")
+local Util = require("util")
 
 local SquadTemplateListGui = {}
-local guiDefinition = {
-  type = "frame", name = "squadTemplateListGui", direction = "vertical", caption = "Squad templates", auto_center = true,
+local guiDefinitionBase = {
+  type = "frame", name = "squadTemplateListGui", direction = "vertical", caption = "Squad templates",
   { type = "scroll-pane", name = "list", direction = "vertical" },
   {
     type = "flow", name = "buttons", direction = "horizontal",
@@ -15,16 +16,21 @@ local guiDefinition = {
 }
 
 local function close(player)
-  local gui = player.gui.screen[guiDefinition.name]
+  log("squadTemplateListGui.close1() " .. #(Globals:get().squadTemplates))
+  local gui = player.gui.screen[guiDefinitionBase.name]
   if gui and gui.valid then
     gui.destroy()
   end
+  log("squadTemplateListGui.close2() " .. #(Globals:get().squadTemplates))
 end
 
 function SquadTemplateListGui.open(player)
-  close(player)
+  log("squadTemplateListGui.Open() " .. #(Globals:get().squadTemplates))
+	close(player)
+  log("squadTemplateListGui.Open2() " .. #(Globals:get().squadTemplates))
   local templates = Globals:get().squadTemplates
-  local list = guiDefinition[1]
+  local guiDefinition = Util.table.deepcopy(guiDefinitionBase)
+	local list = guiDefinition[1]
   if #templates == 0 then
     table.insert(list, { type = "label", caption = "No squad templates." })
   end
@@ -32,15 +38,17 @@ function SquadTemplateListGui.open(player)
     local row = { type = "flow", direction = "horizontal" }
     table.insert(list, row)
     table.insert(row, { type = "label", caption = template.name })
-    table.insert(row, { type = "button", name = "edit", caption = "Edit", tags = { template_index = index } })
-    table.insert(row, { type = "button", name = "delete", caption = "Delete", tags = { template_index = index } })
+    table.insert(row, { type = "button", name = "edit", caption = "Edit", tags = { template_index = template.id } })
+    table.insert(row, { type = "button", name = "delete", caption = "Delete", tags = { template_index = template.id } })
   end
   local guiRoot = GuiMaker.getGui(player.gui.screen, guiDefinition)
+	guiRoot.auto_center = true
+  log("squadTemplateListGui.Open3() " .. #(Globals:get().squadTemplates))
 end
 
 function SquadTemplateListGui.handleClick(event)
   local element = event.element
-  local root = GuiMaker.getRootGui(element, guiDefinition.name)
+  local root = GuiMaker.getRootGui(element, guiDefinitionBase.name)
   if not root then
     return false
   end

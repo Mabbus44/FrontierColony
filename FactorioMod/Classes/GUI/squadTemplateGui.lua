@@ -149,10 +149,8 @@ local function saveTemplate(guiRoot)
   end
   local templates = Globals:get().squadTemplates
   local templateId = guiRoot.tags and guiRoot.tags.templateIndex
-  local template = nil
-  if templateId and templates[templateId] then
-    template = templates[templateId]
-  else
+  local template = Globals.getById(templates, templateId)
+  if not template then
     template = SquadTemplate:new()
     table.insert(templates, template)
   end
@@ -186,9 +184,8 @@ function SquadTemplateGui.open(player, templateIndex)
   close(player)
   local guiRoot = GuiMaker.getGui(player.gui.screen, guiDefinition)
   local templates = Globals:get().squadTemplates
-  local template
-  if templateIndex and templates[templateIndex] then
-    template = templates[templateIndex]
+  local template = Globals.getById(templates, templateIndex)
+  if template then
     guiRoot.tags = { templateIndex = templateIndex }
   else
     template = SquadTemplate:new()
@@ -215,19 +212,16 @@ function SquadTemplateGui.open(player, templateIndex)
   guiRoot.content.maxLaserRifleAmmoRow.maxLaserRifleAmmo.text = tostring(template.ammoMax[WeaponType.LASER_RIFLE] or 0)
   guiRoot.content.maxFreezeRayAmmoRow.maxFreezeRayAmmo.text = tostring(template.ammoMax[WeaponType.FREEZE_RAY] or 0)
   guiRoot.content.maxRocketLauncherAmmoRow.maxRocketLauncherAmmo.text = tostring(template.ammoMax[WeaponType.ROCKET_LAUNCHER] or 0)
-  guiRoot.content.priority.selected_index = Globals:getIndex(template.prio or SquadPrio.ordered[1], SquadPrio.ordered)
+  guiRoot.content.priority.selected_index = Globals.getIndex(template.prio or SquadPrio.ordered[1], SquadPrio.ordered)
 end
 
 function SquadTemplateGui.handleClick(event)
-  local root = event.element
-  while root and root.valid and root.name ~= guiDefinition.name do
-    root = root.parent
-  end
-  if not root or not root.valid or root.name ~= guiDefinition.name then
+  local element = event.element
+  local root = GuiMaker.getRootGui(element, guiDefinition.name)
+  if not root then
     return false
   end
   local player = game.get_player(event.player_index)
-  local element = event.element
   if element.name == "cancel" then
     close(player)
     return true

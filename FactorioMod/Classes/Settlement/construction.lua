@@ -6,7 +6,7 @@ function Settlement:tryBuildGhost(ghost)
   if not (ghost and ghost.valid) then return false end
 
   local inventory = self.livingQuarters.get_inventory(defines.inventory.chest)
-  local recipe = Globals:getEntityRecipe(ghost.ghost_name)
+  local recipe = Globals.getEntityRecipe(ghost.ghost_name)
   if not recipe then return false end
 
   for _, ingredient in pairs(recipe.ingredients) do
@@ -61,7 +61,7 @@ end
 function Settlement:tryDeconstructEntity(entity)
   if not (self.livingQuarters and self.livingQuarters.valid) then return false end
   if not (entity and entity.valid) then return false end
-  local recipe = Globals:getEntityRecipe(entity.name)
+  local recipe = Globals.getEntityRecipe(entity.name)
   if not recipe then return false end
   local inventory = self.livingQuarters.get_inventory(defines.inventory.chest)
   local insertedIngredients = {}

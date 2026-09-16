@@ -1,6 +1,8 @@
 ---@class Globals
 ---@field nextFreeSettlementId number
 ---@field squadTemplates SquadTemplate[]
+---@field nextFreeSquadTemplateId number
+---@field nextFreeSquadId number
 
 local Globals = {}
 local entityRecipes
@@ -12,6 +14,8 @@ function Globals:get()
 	local globals = storage.frontier_colony.globals
 	globals.nextFreeSettlementId = globals.nextFreeSettlementId or 1
 	globals.squadTemplates = globals.squadTemplates or {}
+	globals.nextFreeSquadTemplateId = globals.nextFreeSquadTemplateId or 1
+	globals.nextFreeSquadId = globals.nextFreeSquadId or 1
 	return globals
 end
 
@@ -32,20 +36,49 @@ local function initEntityRecipeLookupTable()
 	return entityRecipes
 end
 
-function Globals:getEntityRecipe(entityName)
+function Globals.getEntityRecipe(entityName)
   if not entityRecipes then
     entityRecipes = initEntityRecipeLookupTable()
   end
   return entityRecipes[entityName]
 end
 
-function Globals:getIndex(value, values)
+function Globals.getIndex(value, values)
   for index, currentValue in ipairs(values) do
     if currentValue == value then
       return index
     end
   end
   log("Error: could not find value " .. tostring(value) .. " in the provided list.")
+end
+
+-- These "ById" functions can be called for any list of objects where the element has a "id" parameter
+function Globals.deleteById(list, id)
+	for i, item in ipairs(list) do
+		if item.id == id then
+			table.remove(list, i)
+			return
+		end
+	end
+end
+
+function Globals.saveById(list, item)
+	for i, currentItem in ipairs(list) do
+		if currentItem.id == item.id then
+			list[i] = item
+			return
+		end
+	end
+	table.insert(list, item)
+end
+
+function Globals.getById(list, id)
+	for i, item in ipairs(list) do
+		if item.id == id then
+			return item
+		end
+	end
+	return nil
 end
 
 return Globals

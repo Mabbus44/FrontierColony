@@ -15,11 +15,13 @@
 ---@field resources table<ResourceType, number>
 ---@field prio SquadPrio
 ---@field surface LuaSurface
+---@field id number
 
 local TransportType = require("Enums.transportType")
 local WeaponType = require("Enums.weaponType")
 local ResourceType = require("Enums.resourceType")
 local SquadPrio = require("Enums.squadPrio")
+local Globals = require("Classes.globals")
 
 local Squad = {}
 Squad.__index = Squad
@@ -43,6 +45,8 @@ function Squad:new()
   obj.resources = {}
   obj.prio = SquadPrio.PRESERVE_RESOURCES
   obj.surface = nil
+  obj.id = Globals:get().nextFreeSquadId
+  Globals:get().nextFreeSquadId = Globals:get().nextFreeSquadId + 1
 
   return obj
 end

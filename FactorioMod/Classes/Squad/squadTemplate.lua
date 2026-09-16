@@ -5,10 +5,12 @@
 ---@field weaponsMax table<WeaponType, number>
 ---@field ammoMax table<WeaponType, number>
 ---@field prio SquadPrio
+---@field id number
 
 local TransportType = require("Enums.transportType")
 local WeaponType = require("Enums.weaponType")
 local SquadPrio = require("Enums.squadPrio")
+local Globals = require("Classes.globals")
 
 local SquadTemplate = {}
 SquadTemplate.__index = SquadTemplate
@@ -22,7 +24,8 @@ function SquadTemplate:new()
   obj.weaponsMax = {}
   obj.ammoMax = {}
   obj.prio = SquadPrio.PRESERVE_RESOURCES
-
+  obj.id = Globals:get().nextFreeSquadTemplateId
+  Globals:get().nextFreeSquadTemplateId = Globals:get().nextFreeSquadTemplateId + 1
   return obj
 end
 

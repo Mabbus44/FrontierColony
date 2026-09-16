@@ -44,4 +44,15 @@ function GuiMaker.getGui(guiRoot, guiDefinition)
   return guiElement
 end
 
+function GuiMaker.getRootGui(guiElement, rootName)
+  local root = guiElement
+  while root and root.valid and root.name ~= rootName do
+    root = root.parent
+  end
+  if not root or not root.valid or root.name ~= rootName then
+    return nil
+  end
+  return root
+end
+
 return GuiMaker
